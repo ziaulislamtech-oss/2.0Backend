@@ -1,0 +1,4 @@
+Zia-Khan  
+lwZAisKg5kbc3tuz
+
+mongodb+srv://Zia-Khan:lwZAisKg5kbc3tuz@cluster0.dwayxpc.mongodb.net/
