@@ -14,6 +14,7 @@ app.post("/notes",async (req,res)=>{
     })
 })
 
+// Get Method
 app.get("/notes", async (req,res)=>{
     const note = await noteModel.find()
     res.status(200).json({
@@ -21,5 +22,6 @@ app.get("/notes", async (req,res)=>{
         note
     })    
 })
+
 
 module.exports = app
