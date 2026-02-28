@@ -1,6 +1,8 @@
 const express = require("express")
 const userModel = require("../models/user.model")
+const crypto = require('crypto')
 const jwt = require("jsonwebtoken")
+const { decode } = require("punycode")
 
 const authRouter = express.Router()
 
@@ -18,7 +20,11 @@ authRouter.post("/register", async (req, res) => {
     }
 
     const user = await userModel.create({
-        email, name, password
+        email,
+        name,
+        // password : crypto.createHash('sha256').update(password).digest('hex')
+        password : crypto.createHash('sha256').update(password).digest('hex')
+
     })
 
     const token = jwt.sign(
@@ -26,7 +32,7 @@ authRouter.post("/register", async (req, res) => {
             id: user._id,
             email: user.email,
         },
-        process.env.JWT_SECRET
+        process.env.JWT_SECRET,{expiresIn : "1h"}
     )
     res.cookie("jwt_token", token)
 
@@ -47,6 +53,7 @@ authRouter.post("/protected", (req, res) => {
 
 /* /api/auth/login               */
 authRouter.post("/login", async (req, res) => {
+
     const { email, password } = req.body
     const user = await userModel.findOne({ email })
 
@@ -56,24 +63,36 @@ authRouter.post("/login", async (req, res) => {
         })
     }
 
-    const isPasswordMatched = user.password === password
+    const hash = crypto.createHash('sha256').update(password).digest('hex')
 
-    if (!isPasswordMatched) {
+    const isPasswordValid = hash === user.password
+    if(!isPasswordValid){
         return res.status(401).json({
-            message: "Invalid Password"
+            message : "invalid password"
         })
     }
-
     const token = jwt.sign({
-        id: user._id,
+        id : user._id,
 
-    }, process.env.JWT_SECRET)
+    },process.evn.JWT_SECRET)
 
-    res.cookie("jwt_token",token)
+    res.cookie('token',token)
+    
+    res.json({
+        message : "user loged in"
+    })
+})
 
+authRouter.post("/get-me",async(req,res)=>{
+    const token = req.cookies.jwt_token
+
+    const decoded = jwt.verify(token,process.env.JWT_SECRET)
+    
+    const user  = await userModel.findById(decoded.id)
+    console.log(user)
     res.status(200).json({
-        message : "user loged in",
-        user
+        message : "user decoded",
+       user
     })
 })
 
