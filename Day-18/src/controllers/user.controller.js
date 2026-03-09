@@ -70,4 +70,33 @@ async function unfollowUserController(req,res){
     })
 }
 
-module.exports = {followUserController,unfollowUserController}
+async function handleRequestController(req,res){
+
+
+    const {status} = req.body
+    const followerUsername = req.user.username
+    const followeeUsername = req.params.username
+
+    const isRequestRecieved = await followModel.findOne({
+        follower : followerUsername,
+        followee : followeeUsername
+    })
+
+    if(!isRequestRecieved){
+        console.log('request not found')
+        return res.status(403).json({
+            message : "you are not the owner of this request"
+    })
+    }
+    
+    const statusText = status ===   'accepted'  ? 'accepted' : 'rejected'
+    isRequestRecieved.status = statusText
+    await isRequestRecieved.save()
+    res.status(200).json({
+        message : `you ${statusText} ${followeeUsername}`,
+        isRequestRecieved
+
+    })
+}
+
+module.exports = {followUserController,unfollowUserController,handleRequestController}

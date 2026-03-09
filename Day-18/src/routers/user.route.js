@@ -17,4 +17,8 @@ userRouter.post("/follow/:username",identifyUser,userController.followUserContro
 // unfollow
 userRouter.post("/unfollow/:username",identifyUser,userController.unfollowUserController)
 
+
+// status 
+userRouter.post('/status/:username',identifyUser,userController.handleRequestController)
+
 module.exports = userRouter

@@ -13,7 +13,7 @@ async function identifyUser(req, res, next) {
 
     try {
         decoded = await jwt.verify(token, process.env.JWT_SECRET)
-        console.log(decoded)
+        // console.log(decoded)
     } catch (error) {
         res.status(401).json({
             message: 'invalid token'
