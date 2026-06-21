@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const API_URL = 'https://sectrynoteapp.onrender.com/'
+const API_URL = 'https://sectrynoteapp.onrender.com'
 
 export const fetchedNotes =async ()=>{
   const response = await axios.get(`${API_URL}/notes`);
