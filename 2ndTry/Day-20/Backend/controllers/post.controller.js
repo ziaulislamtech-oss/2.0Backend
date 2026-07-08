@@ -1,6 +1,7 @@
 const ImageKit = require('@imagekit/nodejs')
 const {toFile} = require('@imagekit/nodejs')
 const postModel = require('../models/post.model')
+const likeModel = require('../models/like.model')
 
 const imagekit = new ImageKit({
     privateKey : process.env.IMAGE_KIT_PRIVATE_KEY
@@ -82,9 +83,106 @@ async function getOnePost(req,res){
 }
 
 
+async function likePostController(req,res){
+
+    console.log('request is comming')
+
+    const user = req.user
+    const postId = req.params.postid
+
+    const isLikeExisting = await likeModel.findOne({
+        user : user.username,
+        post : postId
+    })
+
+    if(isLikeExisting){
+        return res.status(409).json({
+            message : "Post has Already been liked by this user"
+        })
+    }
+
+    const post = await postModel.findById(postId)
+
+    if(!post){
+        return res.status(404).json({
+            message : "post not found"
+        })
+    }
+
+    const like = await likeModel.create({
+        user : user.username,
+        post : postId,
+    })
+
+    res.status(201).json({
+        message : "Post liked successfully",
+        like
+    })
+
+
+
+}
+
+async function unlikePostController(req,res){
+
+    const user = req.user
+    const postId = req.params.postid
+
+    const isPostLiked = await likeModel.findOne({
+        user : user.username,
+        post : postId
+
+    })
+
+
+    if(!isPostLiked){
+        return res.status(400).json({
+            message : "Post didin't like"
+        })
+    }
+
+    await likeModel.findByIdAndDelete(isPostLiked._id)
+
+    return res.status(200).json({
+        message : "Post unliked successfully"
+    })
+}
+
+async function getFeedController(req,res){
+
+    const user = req.user
+    console.log(user)
+
+    const feedPosts = await Promise.all((await postModel.find({}).populate('user','-password').lean())
+    .map(async(post)=>{
+       
+        console.log(typeof(post))
+        const isLiked = await likeModel.findOne({
+            user : user.username,
+            post : post._id
+        })
+
+        post.isLiked = !!isLiked
+
+        return post
+    }))
+    
+    
+
+    return res.status(200).json({
+        message : "Feed fetched successfully",
+        feedPosts
+    })
+
+}
+
+
 
 module.exports = {
     createPostController,
     getAllPostController,
-    getOnePost
+    getOnePost,
+    likePostController,
+    unlikePostController,
+    getFeedController
 }

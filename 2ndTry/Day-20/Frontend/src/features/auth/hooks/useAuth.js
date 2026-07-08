@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { AuthContext } from '../auth.context'
-import { login, register } from '../../service/auth.api'
+import { login,register } from '../service/auth.api'
 
 const useAuth = () => {
 
@@ -18,8 +18,12 @@ const useAuth = () => {
           return response
 
         } catch (error) {
-          console.log(error)
-          throw error
+          console.log(error.response.data.message)
+          
+          return {
+            success : false,
+            message : error.response.data.message
+          }
 
         }finally{
 

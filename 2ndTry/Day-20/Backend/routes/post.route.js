@@ -10,5 +10,8 @@ const postRouter = express.Router()
 postRouter.post('/create',upload.single('file'),identifyUser,postController.createPostController)
 postRouter.get('/get',identifyUser,postController.getAllPostController)
 postRouter.get('/getonepost/:id',identifyUser,postController.getOnePost)
+postRouter.post("/like/:postid",identifyUser,postController.likePostController)
+postRouter.post("/unlike/:postid",identifyUser,postController.unlikePostController)
+postRouter.get('/getfeed',identifyUser,postController.getFeedController)
 
 module.exports = postRouter

@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 async function registerController(req, res) {
+    console.log('register tak request araha hain')
 
     const { username, email, password, bio, profileImage } = req.body
 
@@ -55,7 +56,9 @@ async function registerController(req, res) {
 
 async function loginController(req, res) {
 
+    console.log('login tak request araha hain')
     const { username, email, password } = req.body
+
 
     const isUser = await userModel.findOne({
         $or: [

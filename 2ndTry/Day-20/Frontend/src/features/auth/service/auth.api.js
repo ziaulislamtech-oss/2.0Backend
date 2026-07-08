@@ -1,12 +1,13 @@
 import axios from 'axios'
 
 const api = axios.create({
-    baseURL : 'http://localhost:3000/api/auth',
+    baseURL : 'http://localhost:3000',
     withCredentials : true
 })
 
 export const login = async(data)=>{
-    const response = await api.post('/login',data)
+
+    const response = await api.post('/api/auth/login',data)
 
     console.log(`response from api ${response}`)
 
@@ -16,7 +17,7 @@ export const login = async(data)=>{
 
 export const register = async (data)=>{
 
-    const response = await api.post('/register',data)
+    const response = await api.post('/api/auth/register',data)
 
     return response
 }

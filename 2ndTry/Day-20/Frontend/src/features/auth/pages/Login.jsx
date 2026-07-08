@@ -2,13 +2,14 @@
 
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios'
 import useAuth from "../hooks/useAuth";
 import { AiOutlineLoading3Quarters } from "react-icons/ai"
 
 const Login = () => {
   const { loading, handleLogin } = useAuth()
+  const navigate = useNavigate()
 
   const {
 
@@ -27,6 +28,8 @@ const Login = () => {
 
     console.log(response.message)
     reset()
+    navigate('/')
+
   }
 
 
