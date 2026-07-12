@@ -11,4 +11,25 @@ export const getFollowedUser = async()=>{
     const response = await api.get('api/user/followedusers')
     return response.data
 }
-// http://localhost:3000/api/user/followedusers
+
+export const getSuggestedUsers = async()=>{
+
+    const response = await api.get('/api/user/suggestedusers')
+    console.log('api',response)
+
+    return response.data
+
+}
+
+
+export const getProfile = async()=>{
+
+    const response = await api.get('/api/user/profile')
+
+    return response.data
+}
+
+export const getProfilePosts = async()=>{
+    const response = await api.get('/api/post/profile/posts')
+    return response.data
+}

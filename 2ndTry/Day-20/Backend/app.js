@@ -1,24 +1,34 @@
-const express = require('express')
-const cookieParser = require('cookie-parser')
-const cors = require('cors')
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const path = require("path");
 
-require('dotenv').config()
-const app = express()
-app.use(cookieParser())
+require("dotenv").config();
+
+const app = express();
+
+app.use(cookieParser());
+
 app.use(cors({
-    credentials : true,
-    origin : "http://localhost:5173"
-}))
-const authRouter = require('./routes/auth.route')
-const postRouter = require('./routes/post.route')
-const userRouter = require('./routes/user.route')
+    credentials: true,
+    origin: "http://localhost:5173"
+}));
 
+app.use(express.json());
 
-app.use(express.json())
-app.use('/api/auth',authRouter)
-app.use('/api/post',postRouter)
-app.use('/api/user',userRouter)
+const authRouter = require("./routes/auth.route");
+const postRouter = require("./routes/post.route");
+const userRouter = require("./routes/user.route");
 
+app.use("/api/auth", authRouter);
+app.use("/api/post", postRouter);
+app.use("/api/user", userRouter);
 
+// Serve React build
+app.use(express.static(path.join(__dirname, "public")));
 
-module.exports = app
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+module.exports = app;

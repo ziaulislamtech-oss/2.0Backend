@@ -16,5 +16,6 @@ postRouter.get('/getfeed',identifyUser,postController.getFeedController)
 postRouter.post('/savepost/:postid',identifyUser,postController.savePostController)
 postRouter.post('/deletepost/:postid',identifyUser,postController.deleteSavedPostController)
 postRouter.get('/getsavedposts',identifyUser,postController.getSavedPostController)
+postRouter.get('/profile/posts',identifyUser,postController.getProfilePostsController)
 
 module.exports = postRouter

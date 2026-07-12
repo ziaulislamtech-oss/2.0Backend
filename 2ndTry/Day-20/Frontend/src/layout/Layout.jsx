@@ -1,24 +1,24 @@
-// src/layout/Layout.jsx
-
-import React from "react";
 import { Outlet } from "react-router-dom";
-import SideNavbar from "../features/posts/components/SideNavbar";
-
+import SideNavbar from "../components/SideNavbar";
+import MobileBottomNav from "../components/MobileBottomNav";
 
 const Layout = () => {
-  return (
-    <div className="min-h-screen bg-[#0C1014] flex">
+    return (
+        <div className="min-h-screen bg-[#0C1014]">
 
-      {/* Sidebar */}
-      <SideNavbar/>
+            {/* Desktop Sidebar */}
+            <SideNavbar />
 
-      {/* Page Content */}
-      <main className="flex-1 ml-64">
-        <Outlet />
-      </main>
+            {/* Mobile Bottom Navigation */}
+            <MobileBottomNav />
 
-    </div>
-  );
+            {/* Main Content */}
+            <main className="lg:ml-64 pb-20 lg:pb-0">
+                <Outlet />
+            </main>
+
+        </div>
+    );
 };
 
 export default Layout;

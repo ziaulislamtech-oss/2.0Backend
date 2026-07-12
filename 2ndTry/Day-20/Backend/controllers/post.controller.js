@@ -264,6 +264,30 @@ async function getSavedPostController(req, res) {
     });
 }
 
+async function getProfilePostsController(req, res) {
+
+    try {
+
+        const userId = req.user.id;
+
+        const posts = await postModel
+            .find({ user: userId })
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            message: "Posts fetched successfully",
+            posts
+        });
+
+    } catch (error) {
+
+        return res.status(500).json({
+            message: error.message
+        });
+
+    }
+}
+
 
 module.exports = {
     createPostController,
@@ -274,5 +298,6 @@ module.exports = {
     getFeedController,
     savePostController,
     deleteSavedPostController,
-    getSavedPostController
+    getSavedPostController,
+    getProfilePostsController
 }

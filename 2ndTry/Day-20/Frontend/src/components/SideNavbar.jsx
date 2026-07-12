@@ -16,11 +16,27 @@ const SideNavbar = ({ createPost }) => {
             : "text-gray-300 hover:bg-[#2A2F36] hover:text-white"
         }`;
 
-        const navigate = useNavigate()
+    const navigate = useNavigate()
 
 
     return (
-        <aside className="fixed left-0 top-0   flex flex-col justify-between p-6">
+        <aside
+    className="
+        hidden
+        lg:flex
+        fixed
+        left-0
+        top-0
+        h-screen
+        w-64
+        flex-col
+        justify-between
+        bg-[#0C1014]
+        border-r
+        border-[#2A2F36]
+        p-6
+    "
+>
 
             {/* Top Section */}
             <div>

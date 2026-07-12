@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import useUser from "../hook/useUser";
+import StoryBarSkeleton from "./StoryBarSkeleton";
 
 
 const StoryBar = () => {
 
     const {
         followedUsers,
-        handleGetFollowedUsers
+        handleGetFollowedUsers,
+        followingLoading
     } = useUser();
 
     console.log("story bar",followedUsers)
@@ -14,6 +16,10 @@ const StoryBar = () => {
     useEffect(() => {
         handleGetFollowedUsers();
     }, []);
+
+    if(followingLoading){
+        return <StoryBarSkeleton/>
+    }
 
     return (
 

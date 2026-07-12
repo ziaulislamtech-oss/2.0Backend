@@ -27,7 +27,7 @@ const Register = () => {
             const response = await handleRegister(data)
             console.log(response)
             reset()
-            
+
         } catch (error) {
 
             console.log(error)
@@ -105,6 +105,8 @@ const Register = () => {
                             </p>
                         )}
                     </div>
+                   
+                   
 
                     {/* Register Button */}
                     <button

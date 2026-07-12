@@ -8,6 +8,7 @@ import CreatePostLoading from "../components/CreatingPostLoading";
 const CreatePost = () => {
 
     const [caption, setCaption] = useState('')
+    const [preview, setPreview] = useState(null)
     const postImageInputfieldRef = useRef(null)
     const navigate = useNavigate()
 
@@ -25,8 +26,15 @@ const CreatePost = () => {
 
     }
 
-    if(loading){
-        return<CreatePostLoading/>
+    const handleImageChange = (e) => {
+        const file = e.target.files[0]
+
+        if (!file) return
+        setPreview(URL.createObjectURL(file))
+    }
+
+    if (loading) {
+        return <CreatePostLoading />
     }
 
 
@@ -48,20 +56,32 @@ const CreatePost = () => {
 
                         <label
                             htmlFor="image"
-                            className="w-full h-56 border-2 border-dashed border-gray-600 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-[#BD2423] transition"
+                            className="w-full h-56 border-2 border-dashed border-gray-600 rounded-lg overflow-hidden flex items-center justify-center cursor-pointer hover:border-[#BD2423] transition"
                         >
-                            <ImagePlus
-                                size={55}
-                                className="text-gray-400 mb-3"
-                            />
 
-                            <p className="text-gray-400">
-                                Click to select an image
-                            </p>
+                            {preview ? (
+                                <img
+                                    src={preview}
+                                    alt="Preview"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="flex flex-col items-center">
+                                    <ImagePlus
+                                        size={55}
+                                        className="text-gray-400 mb-3"
+                                    />
 
-                            <p className="text-sm text-gray-500 mt-1">
-                                PNG, JPG, JPEG
-                            </p>
+                                    <p className="text-gray-400">
+                                        Click to select an image
+                                    </p>
+
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        PNG, JPG, JPEG
+                                    </p>
+                                </div>
+                            )}
+
                         </label>
 
                         <input
@@ -70,6 +90,7 @@ const CreatePost = () => {
                             name="postImage"
                             type="file"
                             accept="image/*"
+                            onChange={handleImageChange}
                             className="hidden"
                         />
                     </div>
@@ -94,7 +115,7 @@ const CreatePost = () => {
 
                         <button
                             type="button"
-                            onClick={()=> navigate('/')}
+                            onClick={() => navigate('/')}
                             className="flex-1 border border-gray-600 text-gray-300 py-3 rounded-lg hover:bg-gray-700 transition"
                         >
                             Cancel

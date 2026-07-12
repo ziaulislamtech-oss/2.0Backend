@@ -9,5 +9,6 @@ userRouter.post('/unfollow/:username',identifyUser,userController.unfollowContro
 userRouter.post('/status/:id',identifyUser,userController.updateFollowStatusController)
 userRouter.get('/followedusers',identifyUser,userController.getFollowingUserController)
 userRouter.get('/suggestedusers',identifyUser,userController.getSuggestedUsersController)
+userRouter.get('/profile',identifyUser,userController.getProfileController)
 
 module.exports = userRouter

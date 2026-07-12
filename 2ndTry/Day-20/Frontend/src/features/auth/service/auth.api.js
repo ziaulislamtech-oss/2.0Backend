@@ -19,5 +19,11 @@ export const register = async (data)=>{
 
     const response = await api.post('/api/auth/register',data)
 
-    return response
+    return response.data
+}
+
+export const getMe = async (data)=>{
+    const response = await api.get('/api/auth/getme')
+
+    return response.data
 }

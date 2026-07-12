@@ -9,7 +9,7 @@ import {
 
 const Post = ({ imgUrl, post, toggleLike,toggleSavePost }) => {
 
-    console.log(post)
+   
 
     const [animateHeart, setAnimateHeart] = useState(false)
     const [animateSave,setAnimateSave] = useState(false)
@@ -40,7 +40,7 @@ const Post = ({ imgUrl, post, toggleLike,toggleSavePost }) => {
 
 
     return (
-        <div className="max-w-lg mt-5  bg-[#161B22] border border-[#2A2F36] rounded-xl overflow-hidden text-white">
+    <div className="w-full bg-[#161B22] border border-[#2A2F36] rounded-xl overflow-hidden text-white">
 
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3">
@@ -48,11 +48,11 @@ const Post = ({ imgUrl, post, toggleLike,toggleSavePost }) => {
                     <img
                         src={post.user.profileImage}
                         alt="profile"
-                        className="w-10 h-10 rounded-full object-cover"
+                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-full object-cover"
                     />
 
                     <div>
-                        <h3 className="font-semibold text-sm">{post.user.username}</h3>
+                        <h3 className="font-semibold text-xs sm:text-sm">{post.user.username}</h3>
 
                     </div>
                 </div>
@@ -67,12 +67,12 @@ const Post = ({ imgUrl, post, toggleLike,toggleSavePost }) => {
                 <img
                     src={post.imgUrl}
                     alt="post"
-                    className="w-full h-[500px] object-cover"
+                   className="w-full aspect-square object-cover"
                 />
             </div>
 
             {/* Actions */}
-            <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center justify-between px-3 sm:px-4 py-3">
                 <div className="flex items-center gap-4">
                     <button onClick={handleHeartClick} className="hover:text-red-500 transition">
                         <Heart

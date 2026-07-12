@@ -1,4 +1,5 @@
-const followModel = require("../models/follow.model")
+const followModel = require("../models/follow.model");
+const postModel = require("../models/post.model");
 const userModel = require("../models/user.model")
 
 async function followController(req, res) {
@@ -22,7 +23,7 @@ async function followController(req, res) {
         });
     }
 
-    console.log("followee user",followeeUser)
+    console.log("followee user", followeeUser)
 
     const alreadyFollowing = await followModel.findOne({
         follower: followerId,
@@ -161,10 +162,59 @@ async function getSuggestedUsersController(req, res) {
 
 
 
+async function getProfileController(req, res) {
+    try {
+        const userId = req.user.id;
+
+        const user = await userModel.findById(userId)
+            .select("-password");
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+
+        const postsCount = await postModel.countDocuments({
+            user: userId
+        });
+
+        const followersCount = await followModel.countDocuments({
+            followee: userId,
+            status: "accepted"
+        });
+
+        const followingCount = await followModel.countDocuments({
+            follower: userId,
+            status: "accepted"
+        });
+
+        return res.status(200).json({
+            message: "Profile fetched successfully",
+            user: {
+                ...user.toObject(),
+                posts: postsCount,
+                followers: followersCount,
+                following: followingCount
+            }
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message
+        });
+    }
+}
+
+
+
 module.exports = {
     followController,
     unfollowController,
     updateFollowStatusController,
     getFollowingUserController,
-    getSuggestedUsersController
+    getSuggestedUsersController,
+    getProfileController
+
 }
