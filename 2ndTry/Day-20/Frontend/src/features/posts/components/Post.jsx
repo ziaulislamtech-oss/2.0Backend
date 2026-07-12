@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     Heart,
     MessageCircle,
@@ -7,21 +7,52 @@ import {
     MoreHorizontal,
 } from "lucide-react";
 
-const Post = ({ imgUrl, caption, user, profileImg, isLiked }) => {
+const Post = ({ imgUrl, post, toggleLike,toggleSavePost }) => {
+
+    console.log(post)
+
+    const [animateHeart, setAnimateHeart] = useState(false)
+    const [animateSave,setAnimateSave] = useState(false)
+
+    const handleHeartClick = async () => {
+
+        setAnimateHeart(true)
+
+        setTimeout(() => {
+            setAnimateHeart(false)
+        }, 300);
+
+        toggleLike(post._id)
+
+    }
+
+    const handleSaveClick = async ()=>{
+
+        setAnimateSave(true)
+
+        setTimeout(() => {
+            setAnimateSave(false)
+        }, 300);
+
+        toggleSavePost(post._id)
+    }
+
+
+
     return (
-        <div className="max-w-lg mt-5 mx-auto bg-[#161B22] border border-[#2A2F36] rounded-xl overflow-hidden text-white">
+        <div className="max-w-lg mt-5  bg-[#161B22] border border-[#2A2F36] rounded-xl overflow-hidden text-white">
 
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-3">
                     <img
-                        src={profileImg}
+                        src={post.user.profileImage}
                         alt="profile"
                         className="w-10 h-10 rounded-full object-cover"
                     />
 
                     <div>
-                        <h3 className="font-semibold text-sm">{user}</h3>
+                        <h3 className="font-semibold text-sm">{post.user.username}</h3>
 
                     </div>
                 </div>
@@ -34,7 +65,7 @@ const Post = ({ imgUrl, caption, user, profileImg, isLiked }) => {
             {/* Post Image */}
             <div className="w-full">
                 <img
-                    src={imgUrl}
+                    src={post.imgUrl}
                     alt="post"
                     className="w-full h-[500px] object-cover"
                 />
@@ -43,12 +74,15 @@ const Post = ({ imgUrl, caption, user, profileImg, isLiked }) => {
             {/* Actions */}
             <div className="flex items-center justify-between px-4 py-3">
                 <div className="flex items-center gap-4">
-                    <button className="hover:text-red-500 transition">
+                    <button onClick={handleHeartClick} className="hover:text-red-500 transition">
                         <Heart
-                            className={`cursor-pointer transition ${isLiked
-                                    ? "fill-red-500 text-red-500"
-                                    : "text-white hover:text-red-500"
-                                }`}
+                            className={`cursor-pointer transition ${post.isLiked
+                                ? "fill-red-500 text-red-500"
+                                : "text-white hover:text-red-500"
+                                }
+                                ${animateHeart ? "heart-pop" : ""}
+                                
+                                `}
                             size={26} />
                     </button>
 
@@ -61,8 +95,16 @@ const Post = ({ imgUrl, caption, user, profileImg, isLiked }) => {
                     </button>
                 </div>
 
-                <button className="hover:text-yellow-400 transition">
-                    <Bookmark size={26} />
+                <button onClick={handleSaveClick} className="hover:text-yellow-400 transition">
+                    <Bookmark 
+                     className={`cursor-pointer transition ${post.isSaved
+                                ? "fill-yellow-400 text-yellow-400"
+                                : "text-white hover:text-yellow-400"
+                                }
+                                ${animateSave ? "heart-pop" : ""}
+                                
+                                `}
+                    size={26} />
                 </button>
             </div>
 
@@ -73,9 +115,9 @@ const Post = ({ imgUrl, caption, user, profileImg, isLiked }) => {
             <div className="px-4 pt-2">
                 <p className="text-sm leading-relaxed">
                     <span className="font-semibold mr-2">
-                        {user}
+                        {post.user.username}
                     </span>
-                    {caption}
+                    {post.caption}
                 </p>
             </div>
 

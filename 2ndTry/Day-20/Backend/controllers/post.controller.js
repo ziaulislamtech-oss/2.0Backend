@@ -2,6 +2,7 @@ const ImageKit = require('@imagekit/nodejs')
 const {toFile} = require('@imagekit/nodejs')
 const postModel = require('../models/post.model')
 const likeModel = require('../models/like.model')
+const savePostModel = require('../models/savepost.model')
 
 const imagekit = new ImageKit({
     privateKey : process.env.IMAGE_KIT_PRIVATE_KEY
@@ -162,7 +163,16 @@ async function getFeedController(req,res){
             post : post._id
         })
 
+
+
         post.isLiked = !!isLiked
+
+        const isSaved = await savePostModel.findOne({
+            user : user.id,
+            post : post._id 
+        })
+
+        post.isSaved = !!isSaved
 
         return post
     }))
@@ -176,6 +186,83 @@ async function getFeedController(req,res){
 
 }
 
+async function savePostController(req,res){
+
+    const user = req.user.id
+
+    const postId = req.params.postid
+
+    const isPostAlreadySaved = await savePostModel.findOne({
+        user,
+        post : postId
+    })
+
+    if(isPostAlreadySaved){
+        return res.status(409).json({
+            message : "Post has  already been saved in collection"
+        })
+    }
+
+    const savingPost = await savePostModel.create({
+        user : user,
+        post : postId
+    })
+
+
+    return res.status(201).json({
+        message : "Post saved successfully",
+        savingPost
+    })
+
+    console.log('saved post user',user ,postId)
+    
+
+
+
+}
+
+async function deleteSavedPostController(req,res){
+
+    const user = req.user.id
+    const postId = req.params.postid
+
+   const deletedPost = await savePostModel.findOneAndDelete({
+    user,
+    post : postId
+   })
+
+   if(!deletedPost){
+    return res.status(404).json({
+        message : "post not found in saved collection"
+    })
+   }
+    return res.status(200).json({
+        message : 'post removed from saved collection',
+        deletedPost
+    })
+}
+
+
+
+async function getSavedPostController(req, res) {
+    const user = req.user.id;
+
+    const savedPosts = await savePostModel
+        .find({ user })
+        .populate({
+            path: "post",
+            populate: {
+                path: "user"
+            }
+        });
+
+    const posts = savedPosts.map(item => item.post);
+
+    return res.status(200).json({
+        message: "Saved posts fetched successfully",
+        posts
+    });
+}
 
 
 module.exports = {
@@ -184,5 +271,8 @@ module.exports = {
     getOnePost,
     likePostController,
     unlikePostController,
-    getFeedController
+    getFeedController,
+    savePostController,
+    deleteSavedPostController,
+    getSavedPostController
 }

@@ -3,16 +3,25 @@ import Post from "../components/Post";
 import usePost from "../hook/usePost";
 import FeedSkeleton from "../components/FeedSkeleton";
 
+import NewPostButton from "../components/NewPostButton";
+import StoryBar from "../../users/components/StoryBar";
+
 const Feed = () => {
-  const { handleGetFeed, feed, loading } = usePost();
+  const { handleGetFeed, feed, loading,handleLikePost,handleUnlikePost,handleToggleLike,handleToggleSavePost,handleCreatePost  } = usePost();
 
   useEffect(() => {
     handleGetFeed();
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0C1014] py-10">
-      <div className="max-w-xl mx-auto space-y-6">
+  <div className="min-h-screen bg-[#0C1014] flex flex-col  ">
+
+    {/* Story Bar */}  
+
+    {/* Feed */}
+    <main className="  ml-10 py-10">
+      <div className="max-w-xl  space-y-6">
+    <StoryBar/>
 
         {loading ? (
           <FeedSkeleton />
@@ -20,18 +29,18 @@ const Feed = () => {
           feed.map((post) => (
             <Post
               key={post._id}
-              caption={post.caption}
-              imgUrl={post.imgUrl}
-              user={post.user.username}
-              profileImg={post.user.profileImage}
-              isLiked={post.isLiked}
+              post={post}
+              toggleLike={handleToggleLike}
+              toggleSavePost={handleToggleSavePost}
             />
           ))
         )}
 
       </div>
-    </div>
-  );
+    </main>
+
+  </div>
+);
 };
 
 export default Feed;
