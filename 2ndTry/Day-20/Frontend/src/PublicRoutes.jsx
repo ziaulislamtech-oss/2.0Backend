@@ -5,9 +5,9 @@ import AuthLoading from "./features/auth/components/AuthLoading";
 const PublicRoute = ({ children }) => {
 
     const navigate = useNavigate()
-    const { user, loading } = useAuth();
+    const { user, authLoading } = useAuth();
 
-    if (loading) {
+    if (authLoading) {
         return <AuthLoading/>
     }
 

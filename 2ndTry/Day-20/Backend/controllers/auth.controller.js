@@ -66,10 +66,11 @@ async function loginController(req, res) {
             { username }
         ]
     })
-    
+
 
     if (!isUser) {
         return res.status(404).json({
+            success : false,
             message: "User not found"
         })
     }
@@ -78,6 +79,7 @@ async function loginController(req, res) {
 
     if (!isUserValid) {
         return res.status(401).json({
+            success : false,
             message: "Invalid password"
         })
     }
@@ -89,15 +91,16 @@ async function loginController(req, res) {
         process.env.JWT_SECRET,
         { expiresIn: '1d' }
     )
-    res.cookie('token',token)
+    res.cookie('token', token)
 
     res.status(200).json({
-        message : 'User logged In successfully',
-        user :{
-            username : isUser.email,
-            email : isUser.email,
-            bio : isUser.bio,
-            profileImage : isUser.profileImage
+        message: 'Loggedin successfull',
+        success: true,
+        user: {
+            username: isUser.email,
+            email: isUser.email,
+            bio: isUser.bio,
+            profileImage: isUser.profileImage
         }
     })
 

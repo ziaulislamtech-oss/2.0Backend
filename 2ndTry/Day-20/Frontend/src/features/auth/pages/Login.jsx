@@ -1,6 +1,6 @@
 // Login.jsx
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios'
@@ -9,6 +9,8 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai"
 
 const Login = () => {
   const { loading, handleLogin } = useAuth()
+  const [loginError, setLoginError] = useState("");
+
   const navigate = useNavigate()
 
   const {
@@ -16,21 +18,36 @@ const Login = () => {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors }
 
   } = useForm()
 
+  const username = watch("username")
+  const password = watch("password")
+
+  useEffect(()=>{
+    setLoginError('')
+  },[username,password])
 
   const onSubmit = async (data) => {
 
-    
-    const response = await handleLogin(data)
+    const response = await handleLogin(data);
+    console.log('----', response)
 
-    console.log(response.message)
-    reset()
-    navigate('/')
+    if (!response.success) {
+      setLoginError(response.message);
+      console.log('onSubmit : ', response)
 
-  }
+      return;
+    }
+
+    setLoginError("");
+
+    reset();
+    navigate("/");
+  };
+
 
 
 
@@ -80,16 +97,24 @@ const Login = () => {
               </p>
             )}
           </div>
+          {/* {LOGIN ERROR} */}
+          {
+            loginError && (
+              <div className="bg-red-500/10 border border-red-500 text-red-400 rounded-lg px-4 py-3 text-sm">
+                {loginError}
+              </div>
+            )
+          }
 
           {/* Login Button */}
           <button
             type="submit"
-            disabled ={loading}
+            disabled={loading}
             className="w-full bg-[#BD2423] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition disabled:opacity-50 flex justify-center items-center gap-2 "
           >{loading ? (
             <>
-            <AiOutlineLoading3Quarters className="animate-spin"/>
-            Loging in...
+              <AiOutlineLoading3Quarters className="animate-spin" />
+              Loging in...
             </>
           ) : ("Login")}
 

@@ -5,7 +5,7 @@ import { getMe, login, register } from '../service/auth.api'
 const useAuth = () => {
 
   const context = useContext(AuthContext)
-  const { user, setUser, loading, setLoading } = context
+  const { user, setUser, loading, setLoading, authLoading, setAuthLoading } = context
 
   const handleLogin = async (data) => {
 
@@ -18,11 +18,12 @@ const useAuth = () => {
       return response
 
     } catch (error) {
-      console.log(error.response.data.message)
+
+      console.log("Data:", error.response?.data.message);
 
       return {
         success: false,
-        message: error.response.data.message
+        message: error.response?.data.message
       }
 
     } finally {
@@ -32,27 +33,33 @@ const useAuth = () => {
   }
 
   const handleRegister = async (data) => {
-
     try {
+      setLoading(true);
 
-      setLoading(true)
-      const response = await register(data)
-      setUser(response.user)
-      return response
+      const response = await register(data);
 
+      setUser(response.user);
+
+      return {
+        success: true,
+        user: response.user,
+        message: response.message,
+      };
     } catch (error) {
-      console.log(error)
-      throw error
-
+      return {
+        success: false,
+        message:
+          error.response?.data?.message || "Registration failed",
+      };
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleGetMe = async () => {
     try {
 
-      setLoading(true);
+      setAuthLoading(true);
 
       const response = await getMe();
 
@@ -64,14 +71,14 @@ const useAuth = () => {
 
     } finally {
 
-      setLoading(false);
+      setAuthLoading(false);
 
     }
   }
 
 
   return {
-    user, loading, handleLogin, handleRegister, handleGetMe
+    user, loading, handleLogin, handleRegister, handleGetMe, authLoading
   }
 }
 

@@ -1,6 +1,6 @@
 // Register.jsx
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -10,34 +10,36 @@ import { AiOutlineLoading3Quarters } from "react-icons/ai"
 const Register = () => {
 
     const { loading, handleRegister } = useAuth()
+    const [registerError, setRegisterError] = useState("")
 
     const {
 
         register,
         handleSubmit,
         reset,
+        watch,
         formState: { errors }
     } = useForm();
 
+    const username = watch('username')
+    const email = watch("email")
+    const password = watch('password')
+
+    useEffect(() => {
+        setRegisterError("");
+    }, [username, email, password]);
+
     const onSubmit = async (data) => {
+        const response = await handleRegister(data);
 
-
-        try {
-
-            const response = await handleRegister(data)
-            console.log(response)
-            reset()
-
-        } catch (error) {
-
-            console.log(error)
+        if (!response.success) {
+            setRegisterError(response.message);
+            return;
         }
 
-
-
-
+        setRegisterError("");
+        reset();
     };
-
 
 
     return (
@@ -105,8 +107,16 @@ const Register = () => {
                             </p>
                         )}
                     </div>
-                   
-                   
+
+                    {
+                        registerError && (
+                            <div className="bg-red-500/10 border border-red-500 text-red-400 rounded-lg px-4 py-3 text-sm">
+                                {registerError}
+                            </div>
+                        )
+                    }
+
+
 
                     {/* Register Button */}
                     <button

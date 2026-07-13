@@ -5,7 +5,9 @@ const api = axios.create({
     withCredentials : true
 })
 
+
 export const login = async(data)=>{
+    console.log("hello",import.meta.env.VITE_API_URL)
 
     const response = await api.post('/api/auth/login',data)
 

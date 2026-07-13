@@ -4,9 +4,9 @@ import useAuth from "./features/auth/hooks/useAuth";
 import AuthLoading from "./features/auth/components/AuthLoading";
 const ProtectedRoute = ({ children }) => {
 
-    const { user, loading } = useAuth();
+    const { user, authLoading } = useAuth();
 
-    if (loading) {
+    if (authLoading) {
         return <AuthLoading/>
     }
 
