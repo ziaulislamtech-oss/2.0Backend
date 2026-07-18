@@ -1,0 +1,14 @@
+@import "tailwindcss";
+@keyframes scan {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(280px);
+  }
+}
+
+.animate-scan {
+  animation: scan 2.5s linear infinite alternate;
+}

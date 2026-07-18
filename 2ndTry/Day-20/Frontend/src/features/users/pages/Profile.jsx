@@ -1,44 +1,39 @@
+import { useEffect } from "react";
 import ProfileHeader from "../components/ProfileHeader";
 import ProfileStats from "../components/ProfileStats";
 import ProfilePostsGrid from "../components/ProfilePostsGrid";
 import useUser from "../hook/useUser";
-import { useEffect } from "react";
 
 const Profile = () => {
+  const {
+    profile,
+    handleGetProfile,
+    handleGetProfilePosts,
+    profilePosts,
+  } = useUser();
 
-  const {profile,profileLoading,handleGetProfile,handleGetProfilePosts,profilePostsLoading,profilePosts} = useUser()
+  useEffect(() => {
+    handleGetProfile();
+    handleGetProfilePosts();
+  }, []);
 
-    const user = {
-        username: "Zia Ul Islam",
-        bio: "Learning MERN 🚀",
-        profileImage:
-            "https://ik.imagekit.io/18kjj0yy3/default_user_profile_image.webp?updatedAt=1772251040327",
-        posts: 12,
-        followers: 150,
-        following: 98
-    };
+  return (
+    <div className="min-h-screen bg-[#0C1014] text-white">
+      <div className="mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-6 md:py-10">
 
-    useEffect(()=>{
-      handleGetProfile()
-      handleGetProfilePosts()
-    },[])
-    console.log('ProfilePosts : ',profilePosts)
+        <ProfileHeader user={profile} />
 
-    return (
-        <div className="min-h-screen bg-[#0C1014] text-white">
-
-            <div className="max-w-5xl mx-auto py-10 px-8">
-
-                <ProfileHeader user={profile} />
-
-                <ProfileStats user={profile} />
-
-                <ProfilePostsGrid posts={profilePosts} />
-
-            </div>
-
+        <div className="mt-8">
+          <ProfileStats user={profile} />
         </div>
-    );
+
+        <div className="mt-10">
+          <ProfilePostsGrid posts={profilePosts} />
+        </div>
+
+      </div>
+    </div>
+  );
 };
 
 export default Profile;
