@@ -3,6 +3,7 @@ const cors = require('cors')
 
 const app = express()
 const authRouter = require('./routes/auth.route')
+const songsRouter = require("./routes/songs.route")
 
 const cookieParser = require('cookie-parser')
 
@@ -16,6 +17,7 @@ app.use(cors({
 }))
 
 app.use('/api/auth',authRouter)
+app.use('/api/song',songsRouter)
 
 
 
