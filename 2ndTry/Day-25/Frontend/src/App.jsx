@@ -3,16 +3,19 @@ import React from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './app.routes'
 import { AuthProvider } from './Features/auth/auth.context'
+import { HomeProvider } from './Features/Home/home.context'
 
 
 const App = () => {
   return (
     <div>
-      <AuthProvider>
 
-      <RouterProvider router={router} />
-      </AuthProvider>
-      
+      <HomeProvider>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </HomeProvider>
+
     </div>
   )
 }

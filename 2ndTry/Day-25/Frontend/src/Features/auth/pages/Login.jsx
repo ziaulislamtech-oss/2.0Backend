@@ -13,6 +13,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const { loading, handleLogin } = useAuth()
+  
 
   const {
     handleSubmit,
@@ -28,12 +29,15 @@ export default function Login() {
     await handleLogin(data)
 
     reset()
+
+    navigate('/')
+
   }
 
 
 
   return (
-    <div className={`relative min-h-screen overflow-hidden transition-all duration-500 ${darkMode ? "bg-[#09090B]" : "bg-[#F6F8FC]"
+    <div className={`relative min-h-screen overflow-hidden transition-all duration-500 ${darkMode ? "bg-[var(--bg)]" : "bg-[var(--primary)]"
       }`}
     >
       {/* Background */}
@@ -51,16 +55,16 @@ export default function Login() {
       {/* Overlay */}
 
       <div className={`absolute inset-0 ${darkMode
-        ? "bg-black/25 backdrop-blur-[1px]"
+        ? "bg-[var(--bg)]/40 backdrop-blur-[1px]"
         : "bg-white/35 backdrop-blur-[1px]"
         }`}
       />
 
       {/* Decorative Glow */}
 
-      <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-violet-600/20 blur-[120px]" />
+      <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-[var(--primary)] blur-[120px]" />
 
-      <div className="absolute bottom-0 right-0 h-[450px] w-[450px] rounded-full bg-indigo-500/20 blur-[150px]" />
+      <div className="absolute bottom-0 right-0 h-[450px] w-[450px] rounded-full bg-[var(--primary-glow)] blur-[150px]" />
 
       {/* Main */}
 
@@ -69,7 +73,7 @@ export default function Login() {
             w-full
             max-w-md
             overflow-hidden
-            rounded-[5px]
+            rounded-3xl
             border
             shadow-[0_30px_80px_rgba(0,0,0,.35)]
             backdrop-blur-2xl
@@ -78,7 +82,7 @@ export default function Login() {
           
 
             ${darkMode
-            ? "bg-white/10 border-white/15"
+            ? "bg-[var(--surface)]/90 border-[var(--border)]"
             : "bg-white/65 border-white"
           }
           `}
@@ -100,8 +104,8 @@ export default function Login() {
 
             <div
               className={`absolute inset-0 ${darkMode
-                ? "bg-gradient-to-t from-[#111111] via-transparent"
-                : "bg-gradient-to-t from-white via-transparent"
+                ? "bg-gradient-to-t from-[var(--bg)]/10 via-transparent"
+                : "bg-gradient-to-t from-[var(--primary)] via-transparent"
                 }`}
             />
 
@@ -109,10 +113,28 @@ export default function Login() {
 
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className={`absolute right-5 top-5 flex h-11 w-11 items-center justify-center rounded-full backdrop-blur-xl transition hover:scale-110 ${darkMode
-                ? "bg-white/10 text-white"
-                : "bg-white text-gray-700"
-                }`}
+              className={`
+absolute
+right-5
+top-5
+flex
+h-11
+w-11
+items-center
+justify-center
+rounded-full
+border
+border-[var(--border)]
+bg-[var(--surface)]
+text-[var(--text)]
+backdrop-blur-xl
+transition-all
+duration-300
+
+hover:border-[var(--primary)]
+hover:bg-[var(--surface-light)]
+hover:scale-105
+`}
             >
               {darkMode ? <Sun size={19} /> : <Moon size={19} />}
             </button>
@@ -121,14 +143,14 @@ export default function Login() {
 
             <div className="absolute bottom-8 left-8">
               <h1
-                className={`text-4xl font-bold ${darkMode ? "text-white" : "text-gray-900"
+                className={`text-5xl font-bold font-space-grotesk ${darkMode ? "text-white" : "text-gray-900"
                   }`}
               >
                 Moodify
               </h1>
 
               <p
-                className={`mt-2 text-sm ${darkMode ? "text-gray-300" : "text-gray-600"
+                className={`mt-2 text-sm font-manrope ${darkMode ? "text-[var(--text-muted)]" : "text-white"
                   }`}
               >
                 AI Emotion Based Nasheeds
@@ -145,47 +167,52 @@ export default function Login() {
             {/* Email */}
 
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="flex flex-col ">
+              <div className="flex flex-col  ">
 
 
                 <label
-                  className={`  text-sm font-medium ${darkMode ? "text-gray-300" : "text-gray-700"
+                  className={`  text-xs font-space-grotesk tracking-[2px] uppercase font-medium ${darkMode ? "text-white" : "text-gray-700"
                     }`}
                 >
                   Email Address
                 </label>
 
                 <div
-                  className={`group flex h-14 items-center rounded mt-2 border transition-all duration-300 focus-within:ring-2 ${darkMode
-                    ? "border-white/15 bg-white/5 focus-within:border-violet-500 focus-within:ring-violet-500/30"
-                    : "border-gray-200 bg-white/70 focus-within:border-violet-500 focus-within:ring-violet-300"
-                    }`}
+                  className={` group mt-2 flex h-14 items-center rounded-xl border transition-all duration-300 focus-within:border-[var(--primary)] focus-within:ring-2 focus-within:ring-[var(--primary)]/20
+
+                    ${darkMode
+                      ? "border-[var(--border)] bg-[var(--surface-light)]"
+                      : "border-gray-200 bg-white"
+                    }
+                  `}
                 >
                   <Mail
                     size={20}
-                    className={`ml-5 transition ${darkMode
-                      ? "text-gray-400 group-focus-within:text-violet-400"
-                      : "text-gray-500 group-focus-within:text-violet-600"
-                      }`}
+                    className={` ml-5 text-[var(--text-muted)] transition-colors duration-300 group-focus-within:text-[var(--primary)]
+               `}
                   />
 
                   <input
                     type="email"
-                    {...register('email', {
+                    {...register("email", {
                       required: "Email is required",
                       pattern: {
                         value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                         message: "Invalid email address",
-                      }
+                      },
                     })}
-
                     placeholder="Enter your email"
-                    className={`h-full flex-1 bg-transparent px-4 outline-none placeholder:text-gray-400 ${darkMode ? "text-white" : "text-gray-900"
-                      }`}
+                    className={` h-full flex-1 bg-transparent px-4 font-manrope text-[15px] text-[var(--text)] placeholder:text-[var(--text-muted)] outline-none
+  `}
                   />
                 </div>
                 {errors.email && (
-                  <p className="text-red-400 text-sm mt-2 ">
+                  <p className="
+mt-2
+font-manrope
+text-sm
+text-rose-400
+">
                     {errors.email.message}
                   </p>
                 )}
@@ -196,31 +223,40 @@ export default function Login() {
 
               <div className="mt-6 flex flex-col">
                 <label
-                  className={`mb-2 block text-sm font-medium ${darkMode ? "text-gray-300" : "text-gray-700"
+                  className={`mb-2 block font-space-grotesk tracking-[2px] text-sm font-medium ${darkMode ? "text-gray-300" : "text-gray-700"
                     }`}
                 >
                   Password
                 </label>
 
                 <div
-                  className={`group flex h-14 items-center rounded border transition-all duration-300 focus-within:ring-2 ${darkMode
-                    ? "border-white/15 bg-white/5 focus-within:border-violet-500 focus-within:ring-violet-500/30"
-                    : "border-gray-200 bg-white/70 focus-within:border-violet-500 focus-within:ring-violet-300"
-                    }`}
+                  className={`
+    group
+    flex
+    h-14
+    items-center
+    rounded-xl
+    border
+    transition-all
+    duration-300
+    focus-within:border-[var(--primary)]
+    focus-within:ring-2
+    focus-within:ring-[var(--primary)]/20
+
+    ${darkMode
+                      ? "border-[var(--border)] bg-[var(--surface-light)]"
+                      : "border-gray-200 bg-white"
+                    }
+  `}
                 >
                   <Lock
                     size={20}
-                    className={`ml-5 transition ${darkMode
-                      ? "text-gray-400 group-focus-within:text-violet-400"
-                      : "text-gray-500 group-focus-within:text-violet-600"
-                      }`}
+                    className=" ml-5 text-[var(--text-muted)] transition-colors duration-300 group-focus-within:text-[var(--primary)]"
                   />
 
                   <input
-
                     {...register("password", {
                       required: "Password is required",
-
                       minLength: {
                         value: 6,
                         message: "Password must be at least 6 characters",
@@ -228,16 +264,15 @@ export default function Login() {
                     })}
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className={`h-full flex-1 bg-transparent px-4 outline-none placeholder:text-gray-400 ${darkMode ? "text-white" : "text-gray-900"
-                      }`}
+                    className=" h-full flex-1 bg-transparent px-4 font-manrope text-[15px] text-[var(--text)] placeholder:text-[var(--text-muted)] outline-none
+  "
                   />
 
 
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className={`mr-5 transition hover:scale-110 ${darkMode ? "text-gray-400" : "text-gray-500"
-                      }`}
+                    className=" mr-5 text-[var(--text-muted)] transition-all duration-300 hover:scale-110 hover:text-[var(--primary)]"
                   >
                     {showPassword ? (
                       <EyeOff size={20} />
@@ -247,7 +282,7 @@ export default function Login() {
                   </button>
                 </div>
                 {errors.password && (
-                  <p className="text-red-400 text-sm mt-2  ">
+                  <p className=" mt-2 font-manrope text-sm text-rose-400 ">
                     {errors.password.message}
                   </p>
                 )}
@@ -259,37 +294,58 @@ export default function Login() {
               {/* Login Button */}
 
               <button
-                className=" mt-8 flex h-14 w-full items-center justify-center gap-3 rounded bg-gradient-to-r  from-violet-600  to-indigo-600  text-white font-semibold shadow-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-violet-500/40 active:scale-[0.98]"
                 type="submit"
                 disabled={isSubmitting}
+                className=" mt-8 flex h-14 w-full items-center justify-center gap-3 rounded-xl bg-[var(--primary)] font-space-grotesk text-[15px] font-semibold tracking-wider  text-white shadow-lg
+               shadow-indigo-950/40 transition-all duration-300
+
+       hover:bg-[var(--primary-hover)]
+      hover:shadow-xl
+      hover:shadow-indigo-500/30
+      hover:-translate-y-0.5
+
+      active:translate-y-0
+      active:scale-[0.99]
+  
+      disabled:cursor-not-allowed
+      disabled:opacity-70
+  "
               >
                 {isSubmitting ? (
                   <>
                     <MusicLoader />
-                    <span>Logging in...</span>
+                    <span>Signing In...</span>
                   </>
                 ) : (
-                  "LOGIN"
+                  <>
+                    <ArrowRight size={18} />
+                    <span>Sign In</span>
+                  </>
                 )}
-
-                
               </button>
 
 
 
               {/* Register */}
 
-              <div className="mt-8 text-center">
+              <div className="mt-8 text-center font-manrope text-sm">
 
-                <span
-                  className={`${darkMode ? "text-gray-400" : "text-gray-600"
-                    }`}
-                >
+                <span className="text-[var(--text-muted)]">
                   Don't have an account?
                 </span>
 
-                <button onClick={() => navigate('/register')} className="ml-2 font-semibold text-violet-500 transition hover:text-violet-400">
-                  Register
+                <button
+                  onClick={() => navigate("/register")}
+                  className="
+      ml-2
+      font-semibold
+      text-[var(--primary)]
+      transition-colors
+      duration-300
+      hover:text-[var(--primary-hover)]
+    "
+                >
+                  Create Account
                 </button>
 
               </div>

@@ -4,10 +4,12 @@ import { motion } from 'framer-motion'
 import { Search, Bell, User, Camera, BrainCircuit, Play, Heart, RefreshCw, Sparkles, Music4, } from 'lucide-react';
 
 
-export default function FaceExpression({ onClick = () => { } }) {
+export default function FaceExpression({ onClick = () => { }, getSong }) {
+
     const videoRef = useRef(null);
     const landmarkerRef = useRef(null);
     const streamRef = useRef(null);
+    const [cameraOn, setCameraOn] = useState(false);
     const [analysis, setAnalysis] = useState({
         emotion: "Neutral",
         confidence: 0,
@@ -21,117 +23,209 @@ export default function FaceExpression({ onClick = () => { } }) {
     const [expression, setExpression] = useState("Detecting...");
 
     useEffect(() => {
-        init({ landmarkerRef, videoRef, streamRef });
+
+        if (cameraOn) {
+            init({
+                landmarkerRef,
+                videoRef,
+                streamRef
+            });
+        }
 
         return () => {
+
             if (landmarkerRef.current) {
                 landmarkerRef.current.close();
+                landmarkerRef.current = null;
             }
 
-            if (videoRef.current?.srcObject) {
-                videoRef.current.srcObject
-                    .getTracks()
-                    .forEach((track) => track.stop());
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(track => track.stop());
+                streamRef.current = null;
             }
+
+            if (videoRef.current) {
+                videoRef.current.srcObject = null;
+            }
+
         };
-    }, []);
+
+    }, [cameraOn]);
+
+    function handleCameraToggle() {
+        setCameraOn(prev => !prev);
+    }
 
     async function handleClick() {
         const expression = detect({ landmarkerRef, videoRef, setExpression, setAnalysis })
+        getSong(expression)
         console.log(expression)
         onClick(expression)
     }
 
 
     return (
-       
-        <div className='grid gap-6  lg:grid-cols-[1.1fr_0.9fr]'>
+
+        <div className="grid grid-cols-1 gap-8 xl:grid-cols-[1.15fr_0.85fr]">
 
             {/* Webcam Card */}
 
+            {/* ===================== AI Scanner ===================== */}
+
             <motion.div
-                initial={{ opacity: 0, x: -30 }}
+                initial={{ opacity: 0, x: -40 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6 }}
-                className='rounded-3xl border  border-white/10 bg-white/5 p-6 backdrop-blur-xl'
-            >
+                className=" rounded-2xl border border-[var(--border)]  p-6 shadow-xl backdrop-blur-md" >
+                {/* Header */}
 
-                <div className='mb-4 flex   items-center justify-between'>
+                <div className="mb-6 flex items-center justify-between">
 
                     <div>
 
-                        <h3 className='text-xl font-bold'>
+                        <div className="mb-2 flex items-center gap-3">
 
-                            AI Face Scanner
+                            <div className="flex h-12 w-12 items-center justify-center rounded-md bg-[var(--primary)] text-white
+">
 
-                        </h3>
+                                <Camera size={22} />
 
-                        <p className='text-sm text-zinc-400'>
+                            </div>
 
-                            Real-time emotion recognition
+                            <div>
 
-                        </p>
+                                <h3 className="font-space-grotesk text-xl font-bold">
+
+                                    AI Face Scanner
+
+                                </h3>
+
+                                <p className="font-manrope text-sm text-[var(--text-muted)]">
+
+                                    Real-time facial analysis
+
+                                </p>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
-                    <div className='flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-500/10 px-3 py-1 text-sm text-emerald-300'>
-
-                        <span className='h-2 w-2 rounded-full bg-emerald-400' />
-
-                        Live
-
-                    </div>
+                    <button
+                        onClick={handleCameraToggle}
+                        className={`rounded-md px-4 py-2 text-sm font-semibold transition
+        ${cameraOn
+                                ? "bg-red-500 hover:bg-red-600 text-white"
+                                : "bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white"
+                            }`}
+                    >
+                        {cameraOn ? "Turn Off Camera" : "Enable Camera"}
+                    </button>
 
                 </div>
 
-                {/* Webcam Area */}
+                {/* Camera */}
 
-                <div className='relative flex flex-col justify-center aspect-video overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-violet-950/40 to-cyan-950/30'>
+                <div className="relative overflow-hidden rounded-md border border-[var(--border)] bg-[var(--bg)]">
 
-                    {/* Placeholder */}
+                    {cameraOn ? (
 
-                    <div className='flex h-full items-center justify-center'>
-
-                       
                         <video
                             ref={videoRef}
-                            
-                            className="w-[100%]  rounded-2xl scale-x-[-1] transform  "
                             playsInline
+                            autoPlay
+                            muted
+                            className="aspect-video w-full scale-x-[-1] object-cover"
                         />
+
+                    ) : (
+
+                        <div className="flex aspect-video items-center justify-center bg-[var(--surface-light)]">
+
+                            <div className="text-center">
+
+                                <Camera
+                                    size={60}
+                                    className="mx-auto text-[var(--text-muted)]"
+                                />
+
+                                <h3 className="mt-4 font-space-grotesk text-xl font-bold">
+                                    Camera is Off
+                                </h3>
+
+                                <p className="mt-2 text-[var(--text-muted)]">
+                                    Enable your camera to detect your mood.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    )}
+
+                    {/* Overlay */}
+
+                    <div className="pointer-events-none absolute inset-0">
+
+                        {/* Dark gradient */}
+
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0B1120]/70 via-transparent to-transparent" />
+
+                        {/* Scan line */}
+
+                        <motion.div
+                            className="absolute left-0 h-[2px] w-full bg-[var(--primary)] shadow-[0_0_18px_rgba(99,102,241,.7)]"
+                            animate={{
+                                top: ["5%", "95%", "5%"],
+                            }}
+                            transition={{
+                                duration: 3,
+                                repeat: Infinity,
+                                ease: "linear",
+                            }}
+                        />
+
+                        {/* Scanner Corners */}
+
+                        <div className="absolute left-5 top-5 h-12 w-12 border-l-4 border-t-4 border-[var(--primary)] rounded-tl-xl" />
+
+                        <div className="absolute right-5 top-5 h-12 w-12 border-r-4 border-t-4 border-[var(--primary)] rounded-tr-xl" />
+
+                        <div className="absolute bottom-5 left-5 h-12 w-12 border-l-4 border-b-4 border-[var(--primary)] rounded-bl-xl" />
+
+                        <div className="absolute bottom-5 right-5 h-12 w-12 border-r-4 border-b-4 border-[var(--primary)] rounded-br-xl" />
 
                     </div>
 
-                    {/* Scan Line */}
-
-                    <motion.div
-                        className='absolute left-0 h-[2px] w-full bg-cyan-400 shadow-[0_0_20px_#22d3ee]'
-                        animate={{ top: ['0%', '100%', '0%'] }}
-                        transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-                    />
-
                 </div>
 
-                {/* Scanner Status */}
+                {/* AI Status */}
 
-                <div className='mt-5  flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3'>
+                <div className="mt-6 rounded-md border border-[var(--border)] bg-[var(--surface-light)] p-5">
 
-                    <div className='flex items-center gap-3'>
+                    <div className="flex items-center gap-4">
 
-                        <BrainCircuit className='text-violet-400' size={22} />
+                        <div className="flex h-14 w-14 items-center justify-center rounded-md bg-[var(--primary)]/10">
 
-                        <div>
+                            <BrainCircuit
+                                className="text-[var(--primary)]"
+                                size={28}
+                            />
 
-                            <p className='font-medium'>
+                        </div>
 
-                                AI Status
+                        <div className="flex-1">
 
-                            </p>
+                            <h4 className="font-space-grotesk text-lg font-semibold">
 
-                            <p className='text-sm text-zinc-400'>
+                                AI Engine Ready
 
-                                Scanning facial landmarks...
-                                
+                            </h4>
+
+                            <p className="mt-1 font-manrope text-sm text-[var(--text-muted)]">
+
+                                Face landmarks detected and ready for emotion analysis.
 
                             </p>
 
@@ -139,10 +233,19 @@ export default function FaceExpression({ onClick = () => { } }) {
 
                     </div>
 
-                    <button onClick={handleClick} className='rounded-xl bg-gradient-to-r px-15 py-4 from-violet-600 to-cyan-500 px-4 py-2 text-sm font-semibold hover:opacity-90 hover:cursor-pointer '>
+                    {/* Button */}
 
-                        Scan Face
-
+                    <button
+                        onClick={handleClick}
+                        disabled={!cameraOn}
+                        className={`mt-6 flex w-full items-center justify-center gap-3 rounded-md py-4 font-semibold transition
+        ${cameraOn
+                                ? "bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white"
+                                : "cursor-not-allowed bg-gray-600 text-gray-300"
+                            }`}
+                    >
+                        <Sparkles size={18} />
+                        {cameraOn ? "Scan Face" : "Enable Camera First"}
                     </button>
 
                 </div>
@@ -151,95 +254,149 @@ export default function FaceExpression({ onClick = () => { } }) {
 
             {/* Emotion Card */}
 
+            {/* ===================== Emotion Analysis ===================== */}
+
             <motion.div
-                initial={{ opacity: 0, x: 30 }}
+                initial={{ opacity: 0, x: 40 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className='rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl'
+                className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-xl backdrop-blur-md"
             >
 
-                <div className='mb-6 flex items-center justify-between'>
+                {/* Header */}
+
+                <div className="mb-8 flex items-center justify-between">
 
                     <div>
 
-                        <h3 className='text-xl font-bold'>
+                        <h3 className="font-space-grotesk text-xl font-bold">
 
-                            Detected Emotion
+                            Emotion Analysis
 
                         </h3>
 
-                        <p className='text-sm text-zinc-400'>
+                        <p className="mt-1 font-manrope text-sm text-[var(--text-muted)]">
 
-                            Latest AI prediction
+                            AI prediction based on facial landmarks
 
                         </p>
 
                     </div>
 
-                    <div className='rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-medium text-emerald-300'>
+                    <div className="rounded-full border border-[var(--primary)]/20 bg-[var(--primary)]/10 px-3 py-1.5">
 
-                        96%
+                        <span className="font-manrope text-sm font-semibold text-[var(--primary)]">
+
+                            AI Result
+
+                        </span>
 
                     </div>
 
                 </div>
 
-                {/* Emotion Display */}
+                {/* Emotion Circle */}
 
-                <div className="rounded-3xl border border-violet-500/20 bg-gradient-to-br from-violet-600/10 to-cyan-500/10 p-8 text-center">
+                <div className="relative flex flex-col items-center">
 
-                    <div className="text-7xl">
-                        {analysis.emotion === "Happy"
-                            ? "😊"
-                            : analysis.emotion === "Sad"
-                                ? "😔"
-                                : analysis.emotion === "Surprised"
-                                    ? "😲"
-                                    : "😐"}
+                    <div className="relative flex h-30 w-30 items-center justify-center rounded-full bg-[var(--surface-light)]">
+
+                        <div className="absolute inset-0 rounded-full border border-[var(--primary)]/20" />
+
+                        <div className="absolute h-52 w-52 rounded-full border border-[var(--primary)]/10 animate-pulse" />
+
+                        <div className="text-6xl">
+
+                            {
+                                analysis.emotion === "Happy"
+                                    ? "😊"
+                                    : analysis.emotion === "Sad"
+                                        ? "😔"
+                                        : analysis.emotion === "Surprised"
+                                            ? "😲"
+                                            : "😐"
+                            }
+
+                        </div>
+
                     </div>
 
-                    <h4 className="mt-4 text-3xl font-black">
-                        {analysis.emotion}
-                    </h4>
+                    <h2 className="mt-6 font-space-grotesk text-4xl font-bold">
 
-                    <p className="mt-2 text-zinc-300">
-                        Confidence {analysis.confidence}%
+                        {analysis.emotion}
+
+                    </h2>
+
+                    <p className="mt-2 font-manrope text-sm text-[var(--text-muted)]">
+
+                        AI Confidence
+
                     </p>
 
+                    <div className="mt-4 rounded-full border border-[var(--primary)]/20 bg-[var(--primary)]/10 px-5 py-2.5">
+
+                        <span className="font-space-grotesk text-2xl font-bold text-[var(--primary)]">
+
+                            {analysis.confidence}%
+
+                        </span>
+
+                    </div>
+
                 </div>
 
-                {/* Confidence Bars */}
+                {/* Divider */}
 
-                <div className='mt-6 space-y-4'>
+                <div className="my-8 h-px bg-[var(--border)]" />
 
-                    {
-                        [
-                            ["Smile", analysis.smile],
-                            ["Frown", analysis.frown],
-                            ["Jaw Open", analysis.jawOpen],
-                            ["Eyebrow Raise", analysis.browRaise],
-                        ].map(([label, value]) => (
-                            <div key={label}>
-                                <div className="mb-2 flex justify-between text-sm">
-                                    <span>{label}</span>
-                                    <span className="text-zinc-400">{value}%</span>
-                                </div>
+                {/* Metrics */}
 
-                                <div className="h-2 rounded-full bg-white/10">
-                                    <motion.div
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${value}%` }}
-                                        transition={{ duration: 0.6 }}
-                                        className="h-2 rounded-full bg-gradient-to-r from-violet-500 to-cyan-400"
-                                    />
-                                </div>
+                <div className="space-y-5">
+
+                    {[
+                        ["😊 Smile", analysis.smile],
+                        ["😔 Frown", analysis.frown],
+                        ["😮 Jaw Open", analysis.jawOpen],
+                        ["🤨 Brow Raise", analysis.browRaise],
+                    ].map(([label, value]) => (
+
+                        <div key={label}>
+
+                            <div className="mb-2 flex items-center justify-between">
+
+                                <span className="font-manrope text-sm text-[var(--text)]">
+
+                                    {label}
+
+                                </span>
+
+                                <span className="font-space-grotesk text-sm font-bold text-[var(--primary)]">
+
+                                    {value}%
+
+                                </span>
+
                             </div>
-                        ))
-                    }
+
+                            <div className="h-2 overflow-hidden rounded-full bg-[var(--surface-light)]">
+
+                                <motion.div
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${value}%` }}
+                                    transition={{ duration: .6 }}
+                                    className="h-full rounded-full bg-[var(--primary)]"
+                                />
+
+                            </div>
+
+                        </div>
+
+                    ))}
 
                 </div>
 
             </motion.div>
+
 
         </div>
     );

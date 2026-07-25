@@ -1,325 +1,241 @@
-import { motion } from 'framer-motion';
-import { Search, Bell, User, Camera, BrainCircuit, Play, Heart, RefreshCw, Sparkles, Music4, } from 'lucide-react';
+import { motion } from "framer-motion";
+import {
+  Search,
+  Bell,
+  Moon,
+  UserCircle2,
+  Upload,
+  Menu,
+  X
+} from "lucide-react";
 
-import FaceExpression from '../../Expression/components/FaceExpression'
+import FaceExpression from "../../Expression/components/FaceExpression";
+import RecommendationCard from "../components/RecomendationsCard";
+import useHome from "../hooks/useHome";
+import AllSongs from "../components/AllSongs";
+import Footer from "../components/Footer";
+import GlobalMusicPlayer from "../components/GlobalMusicPlayer";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
-const recentNasheeds = [
-    {
-        title: 'Ya Hayyu Ya Qayyum',
-        artist: 'Mishary Alafasy',
-    },
-    {
-        title: 'Tala Al Badru',
-        artist: 'Maher Zain',
-    },
-    {
-        title: 'Hasbi Rabbi',
-        artist: 'Sami Yusuf',
-    },
-];
+export default function Home() {
 
-const Home = () => {
-    return (
-        <div className='min-h-screen  bg-[#09090B] text-white'>
+  const { loading, song, allSongs, handleGetSong } = useHome()
 
-            {/* Background Glow */}
+  const [mobileMenu, setMobileMenu] = useState(false);
+  
 
-            <div className='absolute left-0 top-0 h-96 w-96 rounded-full bg-violet-600/20 blur-[160px]' />
+  const navigate = useNavigate()
 
-            <div className='absolute bottom-0 right-0 h-[500px] w-[500px] rounded-full bg-cyan-500/10 blur-[200px]' />
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]">
 
-            {/* Navbar */}
+      {/* Background Glow */}
 
-            <header className='sticky top-0 z-50 border-b border-white/10 bg-[#09090B]/80 backdrop-blur-xl'>
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
 
-                <div className='mx-auto flex h-16 max-w-7xl items-center justify-between px-6'>
+        <div className="absolute left-[-180px] top-[-180px] h-[500px] w-[500px] rounded-full bg-[var(--primary)]/10 blur-[180px]" />
 
-                    {/* Logo */}
+        <div className="absolute right-[-220px] top-[20%] h-[420px] w-[420px] rounded-full bg-[var(--secondary)]/8 blur-[200px]" />
 
-                    <div className='flex   items-center gap-3 w-50 h-20'>
+      </div>
 
-                        {/* <img className='w-[200px]' src={'logo.png'} alt="" /> */}
-                        <h2 className='text-2xl font-bold'>Moodify</h2>
-                        
-                    </div>
+      <div className="relative z-10 mx-auto max-w-[1700px] px-8 py-6">
 
-                    {/* Search */}
+        {/* ========================= Navbar ========================= */}
 
-                    <div className='hidden flex-1 justify-center md:flex'>
 
-                        <div className='flex w-full max-w-md items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-2'>
+        <motion.nav
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="hidden lg:flex mb-12 flex items-center justify-between rounded-md border border-[var(--border)] bg-[var(--card)]/80 px-8 py-4 backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,.35)] "
+        >
 
-                            <Search size={18} className='text-zinc-400' />
+          {/* Logo */}
 
-                            <input
-                                type='text'
-                                placeholder='Search nasheeds, artists...'
-                                className='w-full bg-transparent text-sm outline-none placeholder:text-zinc-500'
-                            />
+          <div>
 
-                        </div>
+            <h1 className="font-orbitron text-2xl font-bold tracking-wide">
 
-                    </div>
+              <span className="bg-gradient-to-r from-[var(--text)] to-[var(--primary)] bg-clip-text text-transparent">
 
-                    {/* Right */}
+                Moodify
 
-                    <div className='flex items-center gap-3'>
+              </span>
 
-                        <button className='rounded-xl border border-white/10 bg-white/5 p-2 hover:bg-white/10'>
+            </h1>
 
-                            <Bell size={18} />
+            <p className="mt-1 text-xs uppercase tracking-[0.18em] text-[var(--text)]">
 
-                        </button>
+              AI Emotion Based Nasheeds
 
-                        <button className='flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-cyan-500 font-semibold'>
+            </p>
 
-                            Z
+          </div>
 
-                        </button>
+          {/* Search */}
 
-                    </div>
+          <div className=" hidden w-100  items-center gap-3 rounded-md border border-[var(--border)] bg-black/20 px-5 py-3 transition focus-within:border-[var(--primary)] lg:flex
+">
+
+            <Search size={20} className="text-[var(--text)]" />
+
+            <input
+              type="text"
+              placeholder="Search Nasheeds..."
+              className="w-full bg-transparent text-sm outline-none placeholder:text-[var(--text-muted)]"
+            />
+
+          </div>
+
+          {/* Right */}
+
+          <div className="flex items-center gap-4">
+
+            <button
+              onClick={() => navigate('/uploadsong')}
+              className="flex justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 transition hover:border-[var(--primary)] hover:bg-[var(--card-hover)] ">
+
+              Upload song
+
+            </button>
+
+
+            <button
+              onClick={() => navigate('/profile')}
+              className=" flex justify-center gap-2 text-center items-center px-3 py-1 rounded-xl bg-gradient-to-br from-[var(--primary)] to-[var(--secondary)] p-[2px] ">
+
+              <UserCircle2 size={38} /> Profile
+
+            </button>
+
+          </div>
+
+        </motion.nav>
+
+        {/* ========================= Mobile Navbar ========================= */}
+
+        <motion.nav
+          className="
+    lg:hidden
+    mb-8
+    rounded-2xl
+    border
+    border-[var(--border)]
+    bg-[var(--card)]
+    p-4
+    "
+        >
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <h1 className="font-orbitron text-xl font-bold">
+
+                Moodify
+
+              </h1>
+
+              <p className="text-xs text-[var(--text-muted)]">
+
+                AI Emotion
+
+              </p>
+
+            </div>
+
+            <button
+              onClick={() => setMobileMenu(!mobileMenu)}
+            >
+
+              {
+                mobileMenu
+                  ? <X size={28} />
+                  : <Menu size={28} />
+              }
+
+            </button>
+
+          </div>
+
+          {
+            mobileMenu && (
+
+              <div className="mt-5 space-y-4">
+
+                {/* Search */}
+
+                <div className="flex items-center gap-3 rounded-xl border border-[var(--border)] bg-black/20 px-4 py-3">
+
+                  <Search size={18} />
+
+                  <input
+                    placeholder="Search..."
+                    className="w-full bg-transparent outline-none"
+                  />
 
                 </div>
 
-            </header>
-
-            {/* Main */}
-
-            <main className='relative mx-auto max-w-7xl px-6 py-8'>
-
-                {/* Greeting */}
-
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className='mb-8'>
-
-                    <div className='flex items-center gap-2 text-violet-300'>
-
-                        <Sparkles size={18} />
-
-                        <span className='text-sm font-medium'>
-
-                            Assalamu Alaikum
-
-                        </span>
-
-                    </div>
-
-                    <h2 className='mt-2 text-4xl font-black'>
-
-                        How are you feeling today?
-
-                    </h2>
-
-                    <p className='mt-3 text-zinc-400'>
-
-                        Let AI analyze your expression and find a meaningful Arabic or Urdu Nasheed for your current mood.
-
-                    </p>
-
-                </motion.div>
-
-                {/* Hero Grid */}
-
-               <FaceExpression/>
-
-                {/* Recommendation */}
-
-                <motion.section
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className='mt-8 rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl'
+                <button
+                  onClick={() => navigate("/uploadsong")}
+                  className="w-full rounded-xl bg-[var(--card-hover)] p-3"
                 >
 
-                    <div className='mb-6 flex items-center justify-between'>
+                  Upload Song
 
-                        <div>
+                </button>
 
-                            <h3 className='text-2xl font-bold'>
-
-                                Recommended For You
-
-                            </h3>
-
-                            <p className='text-zinc-400'>
-
-                                Based on your current emotional state
-
-                            </p>
-
-                        </div>
-
-                        <button className='flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10'>
-
-                            <RefreshCw size={16} />
-
-                            Refresh
-
-                        </button>
-
-                    </div>
-
-                    <div className='grid gap-6 lg:grid-cols-[220px_1fr]'>
-
-                        {/* Album Art */}
-
-                        <div className='aspect-square overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-violet-600/30 to-cyan-500/20'>
-
-                            <div className='flex h-full items-center justify-center'>
-
-                                <div className='text-center'>
-
-                                    <Music4 size={56} className='mx-auto text-violet-200' />
-
-                                    <p className='mt-3 text-sm text-violet-100'>
-
-                                        Album Art
-
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        {/* Content */}
-
-                        <div className='flex flex-col justify-between'>
-
-                            <div>
-
-                                <div className='inline-flex items-center gap-2 rounded-full bg-violet-500/10 px-3 py-1 text-sm text-violet-300'>
-
-                                    <Sparkles size={14} />
-
-                                    AI Match
-
-                                </div>
-
-                                <h4 className='mt-4 text-3xl font-black'>
-
-                                    Ya Hayyu Ya Qayyum
-
-                                </h4>
-
-                                <p className='mt-2 text-lg text-zinc-300'>
-
-                                    Mishary Rashid Alafasy
-
-                                </p>
-
-                                <p className='mt-4 max-w-2xl leading-7 text-zinc-400'>
-
-                                    This Nasheed was selected because its calm rhythm and reflective tone align closely with your detected emotional state of peaceful contemplation.
-
-                                </p>
-
-                            </div>
-
-                            {/* Controls */}
-
-                            <div className='mt-8 flex flex-wrap items-center gap-4'>
-
-                                <button className='flex items-center gap-3 rounded-2xl bg-gradient-to-r from-violet-600 to-cyan-500 px-6 py-3 font-semibold shadow-lg shadow-violet-500/20 hover:opacity-90'>
-
-                                    <Play size={18} fill='currentColor' />
-
-                                    Play Now
-
-                                </button>
-
-                                <button className='flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 py-3 hover:bg-white/10'>
-
-                                    <Heart size={18} />
-
-                                    Save
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </motion.section>
-
-                {/* Recently Played */}
-
-                <motion.section
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
-                    className='mt-8'
+                <button
+                  onClick={() => navigate("/profile")}
+                  className="w-full rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--secondary)] p-3"
                 >
 
-                    <div className='mb-5 flex items-center justify-between'>
+                  Profile
 
-                        <div>
+                </button>
 
-                            <h3 className='text-2xl font-bold'>
+              </div>
 
-                                Recently Played
+            )
+          }
 
-                            </h3>
+        </motion.nav>
 
-                            <p className='text-zinc-400'>
+        {/* ========================= Hero ========================= */}
 
-                                Continue listening where you left off
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: .2 }}
+          className="mb-20 flex flex-col items-center text-center"
+        >
 
-                            </p>
 
-                        </div>
+          <p className="font-manrope font-bold tracking-[5px] text-[var(--primary)]">EMOTION-AWARE NASHEED COMPANION</p>
 
-                    </div>
+          <h2 className="mt-2 max-w-3xl text-5xl tracking-[4px] font-space-grotesk font-extrabold leading-tight">Music that meets</h2>
+          <h2 className="mt-2 max-w-3xl tracking-[5px] text-[var(--primary)] text-4xl font-space-grotesk font-extrabold leading-tight">your soul</h2>
 
-                    <div className='grid gap-4 md:grid-cols-3'>
+          <p className="mt-5 font-manrope tracking-[2px] max-w-2xl text-lg leading-8 text-center text-slate-400">
 
-                        {recentNasheeds.map((item, index) => (
-                            <motion.div
-                                key={item.title}
-                                whileHover={{ y: -4 }}
-                                transition={{ duration: 0.2 }}
-                                className='rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl'
-                            >
+            Look into the camera and let Moodify read your mood — then discover nasheeds chosen just for this moment.
 
-                                <div className='mb-4 aspect-square overflow-hidden rounded-xl bg-gradient-to-br from-violet-600/20 to-cyan-500/20'>
+          </p>
 
-                                    <div className='flex h-full items-center justify-center'>
+        </motion.section>
 
-                                        <Music4 className='text-violet-200' size={36} />
+        {/* ========================= Scanner ========================= */}
 
-                                    </div>
+       
+        <FaceExpression getSong={handleGetSong}  />
 
-                                </div>
 
-                                <h4 className='font-semibold'>{item.title}</h4>
-
-                                <p className='mt-1 text-sm text-zinc-400'>{item.artist}</p>
-
-                                <button className='mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-2 text-sm hover:bg-white/10'>
-
-                                    <Play size={16} />
-
-                                    Play Again
-
-                                </button>
-
-                            </motion.div>
-                        ))}
-
-                    </div>
-
-                </motion.section>
-
-            </main>
-
-        </div>
-    );
-};
-
-export default Home;
+        <RecommendationCard song={song} />
+        <AllSongs allSongs={allSongs} />
+      </div>
+      <GlobalMusicPlayer />
+      <Footer />
+    </div>
+  );
+}

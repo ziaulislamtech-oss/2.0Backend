@@ -5,58 +5,112 @@ const storageService = require('../services/storage.service')
 const songModel = require('../models/song.model')
 
 
-const songUploadController = async(req,res)=>{
+const songUploadController = async (req, res) => {
 
-    console.log(req.file)
-    const {mood} = req.body
+    try {
+        const { title, artist, mood, language, description } = req.body;
 
-    const songBuffer = req.file.buffer
-    const tags = id3.read(songBuffer)
+        if (!req.files?.audioFile) {
+            return res.status(400).json({
+                message: "Audio file is required",
+            });
+        }
 
-    console.log(tags)
+        if (!req.files?.coverImage) {
+            return res.status(400).json({
+                message: "Cover image is required",
+            });
+        }
 
-    const songFile = await storageService.uploadFile({
-        buffer : req.file.buffer,
-        filename : tags.title+"mp3",
-        folder : 'songs'
-    })
-    console.log('song file : ',songFile)
+        const audio = req.files.audioFile[0];
+        const cover = req.files.coverImage[0];
 
-    const song = await songModel.create({
-        title : tags.title,
-        url : songFile.url,
-        mood : mood
+        const songFile = await storageService.uploadFile({
+            buffer: audio.buffer,
+            filename: `${Date.now()}-${title}.mp3`,
+            folder: "songs",
+        });
 
-    })
+        const uploadCover = await storageService.uploadFile({
+            buffer: cover.buffer,
+            filename: `${Date.now()}-${title}-cover`,
+            folder: "song-covers",
+        });
 
-    res.status(201).json({
-        message : "song uploaded successfully",
-        song
-    })
+        const song = await songModel.create({
+            title,
+            artist,
+            mood,
+            language,
+            description,
+            url: songFile.url,
+            coverImage: uploadCover.url,
+        });
 
+        return res.status(201).json({
+            message: "Song uploaded successfully",
+            song,
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            message: error.message,
+            stack: error.stack,
+        })
+    };
 
 }
 
-const getSongController = async(req,res)=>{
+const getSongController = async (req, res) => {
 
-    const mood = req.query
+    const { mood } = req.query;
 
-    const song = await songModel.findOne(mood)
+    const songs = await songModel.aggregate([
+        {
+            $match: { mood }
+        },
+        {
+            $sample: { size: 1 }
+        }
+    ]);
 
-    if(!song){
+    if (songs.length === 0) {
         return res.status(404).json({
-            message : "we have no songs for your current mood"
-        })
+            message: "We have no songs for your current mood."
+        });
     }
 
     return res.status(200).json({
-        message : "we have a song for your mood",
-        song
-    })
+        message: "We have a song for your mood.",
+        song: songs[0]
+    });
+};
+
+const getAllSongsController = async (req, res) => {
+
+    try {
+        const songs = await songModel.find().sort({ createdAt: -1 })
+
+        return res.status(200).json({
+            message: "Songs fetched successfully",
+            count: songs.length,
+            songs
+        })
+    } catch (error) {
+        console.log(error)
+
+        return res.status(500).json({
+            message: "Internal server error",
+
+        })
+    }
 }
 
 
 module.exports = {
     songUploadController,
-    getSongController
+    getSongController,
+    getAllSongsController
 }

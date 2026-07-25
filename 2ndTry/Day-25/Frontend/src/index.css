@@ -1,4 +1,45 @@
 @import "tailwindcss";
+
+
+/* =========================
+   Moodify Theme
+========================= */
+
+:root {
+  /* Backgrounds */
+  --bg: #080610;
+  --surface: #0f0c1a;
+  --surface-2 : #16112a;
+  --card: #0F0C1A;
+  --card-hover: #1E293B;
+
+  /* Brand */
+  --primary: #a855f7;
+  --primary-glow : #7c3aed;
+  --primary-hover: #8B5CF6;
+  --secondary: #1e1535;
+  --accent : #d946ef;
+
+  /* Text */
+  --text: #F8FAFC;
+  --text-muted: #94A3B8;
+
+  /* Borders */
+  --border: #2a1f4a;
+
+  /* Status */
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+
+  /* Glow */
+  --glow: rgba(124, 58, 237, .35);
+}
+
+/* =========================
+   Animations
+========================= */
+
 @keyframes scan {
   0% {
     transform: translateY(0);
@@ -11,4 +52,57 @@
 
 .animate-scan {
   animation: scan 2.5s linear infinite alternate;
+}
+
+
+
+
+@keyframes scan {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(280px);
+  }
+}
+
+.animate-scan {
+  animation: scan 2.5s linear infinite alternate;
+}
+
+/* =========================
+   Fonts
+========================= */
+
+/* Orbitron LOGO font */
+
+@font-face {
+  font-family: "orbitron";
+  src: url("./assets/fonts/Orbitron/static/Orbitron-Medium.ttf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Space Grotesk  Main-Headings */
+
+@font-face {
+  font-family: "space-grotesk";
+  src: url("./assets/fonts/Space_Grotesk/static/SpaceGrotesk-Bold.ttf") format("opentype");
+
+  font-style: normal;
+}
+
+/* Manrope */
+
+@font-face {
+  font-family: "manrope";
+  src: url("./assets/fonts/Manrope//static/Manrope-Regular.ttf") format("opentype");
+  font-style: normal;
+}
+
+@theme {
+  --font-orbitron: "orbitron";
+  --font-space-grotesk: "space-grotesk", sans-serif;
+  --font-manrope: "manrope", sans-serif;
 }
