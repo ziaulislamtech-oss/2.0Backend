@@ -21,8 +21,9 @@ app.use('/api/song',songsRouter)
 
 app.use(express.static(path.join(__dirname, "../public")));
 
+
 app.get("/{*splat}", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public", "index.html"));
+    res.sendFile(path.join(__dirname, "../src/public", "index.html"));
 });
 
 
