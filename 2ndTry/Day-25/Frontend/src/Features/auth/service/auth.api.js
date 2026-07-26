@@ -1,14 +1,14 @@
 import axios from 'axios'
 
 const api = axios.create({
-    baseURL : import.meta.env.VITE_API_URL,
+    baseURL : '/api',
     withCredentials : true
 })
 
 
 export async function loginUser(data){
 
-    const response = await api.post('/api/auth/login',data)
+    const response = await api.post('/auth/login',data)
 
     return response.data
 
@@ -16,19 +16,19 @@ export async function loginUser(data){
 
 export async function registerUser(data){
 
-    const resposne = await api.post('/api/auth/register',data)
+    const resposne = await api.post('/auth/register',data)
     return resposne.data
 }
 
 export async function getMe(){
     
-    const response = await api.get('/api/auth/getme')
+    const response = await api.get('/auth/getme')
     return response.data
 }
 
 export async function logOut() {
     
-    const response = await api.post('/api/auth/logout')
+    const response = await api.post('/auth/logout')
 
     return response.data
 }
