@@ -39,8 +39,8 @@ export default function Register() {
       <img
         src={
           darkMode
-            ? "login-bg-dark.png"
-            : "login-bg-white.png"
+            ? "login-bg-dark.webp"
+            : "login-bg-white.webp"
         }
         alt=""
         className="absolute"
@@ -90,8 +90,8 @@ export default function Register() {
             <img
               src={
                 darkMode
-                  ? "login-bg-dark-top.png"
-                  : "login-bg-white-top.png"
+                  ? "login-bg-dark-top.webp"
+                  : "login-bg-white-top.webp"
               }
               alt=""
               className="h-full w-full object-cover"
