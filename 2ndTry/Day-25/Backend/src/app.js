@@ -19,11 +19,11 @@ app.use(cors({
 app.use('/api/auth',authRouter)
 app.use('/api/song',songsRouter)
 
-app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(__dirname, "public")));
 
 
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../src/public", "index.html"));
+app.get("/{*splat}", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 
