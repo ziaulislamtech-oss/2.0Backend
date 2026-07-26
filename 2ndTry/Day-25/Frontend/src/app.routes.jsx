@@ -22,9 +22,9 @@ export const router = createBrowserRouter([
     {
         path: "/register",
         element:
-            <Protected>
+           
                 <Register />
-            </Protected>
+           
     },
     {
         path: "/uploadsong",
