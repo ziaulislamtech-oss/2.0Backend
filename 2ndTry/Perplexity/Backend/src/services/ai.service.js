@@ -14,7 +14,7 @@ const gemniModel = new ChatGoogleGenerativeAI({
 export async function testAi(){
 
     try{
-        const response =  await gemniModel.invoke("What is the capital of me")
+        const response =  await gemniModel.invoke("What is the capital of Pakistan")
         console.log("AI Response : ",response.content)
     }catch(err){
         console.error('Error calling gemni',err.message)
