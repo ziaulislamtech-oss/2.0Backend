@@ -1,0 +1,25 @@
+@import "tailwindcss";
+
+
+@theme {
+  --color-primary: #1a0dff;
+  /* electric indigo — bold, high contrast */
+
+  --color-secondary: #6c47ff;
+  /* violet — complements without competing */
+
+  --color-background: #ffffff;
+  --color-surface: #f4f4f6;
+  /* cool off-white — subtle depth */
+
+  --color-text: #08080f;
+  /* near-black — stronger than #0f172a */
+  --color-text-muted: #52525b;
+  /* warm zinc — readable, not washed out */
+
+  --color-border: #d4d4d8;
+  /* zinc — sharper than slate */
+
+  --color-success: #16a34a;
+  --color-danger: #dc2626;
+}
