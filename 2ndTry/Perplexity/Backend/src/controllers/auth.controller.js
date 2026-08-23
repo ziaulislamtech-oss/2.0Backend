@@ -96,39 +96,54 @@ export const verifyEmailController = async (req, res) => {
 
 }
 
-export const loginController = async (req,res)=>{
+export async function loginController(req, res) {
+    const { email, password } = req.body;
 
-    const {email,password} = req.body
+    const user = await userModel.findOne({ email })
 
-    const user = await userModel.findOne({email})
-    
-    if(!user){
-
-        return res.status(403).json({
-            message : 'User not found'
+    if (!user) {
+        return res.status(400).json({
+            message: "Invalid email or password",
+            success: false,
+            err: "User not found"
         })
     }
 
-    const isPasswordValid = await user.comparePassword(password)
+    const isPasswordMatch = await user.comparePassword(password);
 
-    if(!isPasswordValid){
+    if (!isPasswordMatch) {
+        return res.status(400).json({
+            message: "Invalid email or password",
+            success: false,
+            err: "Incorrect password"
+        })
+    }
 
-        return res.status(401).json({
-            message : "Invalid credentials"
-        }) 
+    if (!user.verified) {
+        return res.status(400).json({
+            message: "Please verify your email before logging in",
+            success: false,
+            err: "Email not verified"
+        })
     }
 
     const token = jwt.sign({
-        email : user.email
-    },process.env.JWT_SECRET_KEY,{expiresIn:"7d"})
+        id: user._id,
+        username: user.username,
+    }, process.env.JWT_SECRET_KEY, { expiresIn: '7d' })
 
-    res.cookie('token',token)
+    res.cookie("token", token)
 
     res.status(200).json({
-
-        message : "User loggedin successfully",
-        user : user
+        message: "Login successful",
+        success: true,
+        user: {
+            id: user._id,
+            username: user.username,
+            email: user.email
+        }
     })
+
 }
 
 export async function getMe(req, res) {

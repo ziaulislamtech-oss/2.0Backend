@@ -1,6 +1,31 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate, } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 const Login = () => {
+
+  const {handleLogin} = useAuth()
+
+  const [email,setEmail] = useState("")
+  const [password,setPassword] = useState("")
+  
+  const navigate = useNavigate()
+  
+
+  const handleSubmit= async (event)=>{
+
+    event.preventDefault()
+    console.log('login...')
+
+    await handleLogin(email,password)
+
+    setEmail("")
+    setPassword("")
+  
+    navigate('/')
+  }
+
+
   return (
     <div className="min-h-screen bg-background text-text flex items-center justify-center px-4">
 
@@ -20,7 +45,7 @@ const Login = () => {
         {/* Login Card */}
         <div className="bg-surface border border-border rounded-2xl p-6 sm:p-8 shadow-sm">
 
-          <form className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-5">
 
             {/* Email */}
             <div>
@@ -33,6 +58,9 @@ const Login = () => {
 
               <input
                 id="email"
+                value={email}
+                required
+                onChange={(event)=>{setEmail(event.target.value)}}
                 type="email"
                 placeholder="Enter your email"
                 className=" w-full px-4 py-3 rounded-xl  bg-background border  border-border  text-text  placeholder:text-text-muted outline-none transition  focus:border-primary focus:ring-2  focus:ring-primary/20
@@ -50,16 +78,14 @@ const Login = () => {
                   Password
                 </label>
 
-                <button
-                  type="button"
-                  className="text-sm text-primary hover:text-primary-hover transition"
-                >
-                  Forgot password?
-                </button>
+                
               </div>
 
               <input
                 id="password"
+                required
+                value={password}
+                onChange={(event)=>setPassword(event.target.value)}
                 type="password"
                 placeholder="Enter your password"
                 className=" w-full px-4 py-3 rounded-xl  bg-background border  border-border  text-text  placeholder:text-text-muted outline-none transition  focus:border-primary focus:ring-2  focus:ring-primary/20
