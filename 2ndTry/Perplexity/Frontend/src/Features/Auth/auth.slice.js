@@ -5,7 +5,8 @@ const authSlice = createSlice({
     initialState: {
         user: null,
         loading: false,
-        error: null
+        error: null,
+        authChecked: false // becomes true once the initial "am I logged in?" check completes
     },
     reducers : {
         setUser : (state,action)=>{
@@ -17,9 +18,12 @@ const authSlice = createSlice({
         },
         setError : (state,action)=>{
             state.error = action.payload
+        },
+        setAuthChecked : (state,action)=>{
+            state.authChecked = action.payload
         }
     }
 })
 
-export const {setUser,setLoading,setError} = authSlice.actions
+export const {setUser,setLoading,setError,setAuthChecked} = authSlice.actions
 export default authSlice.reducer

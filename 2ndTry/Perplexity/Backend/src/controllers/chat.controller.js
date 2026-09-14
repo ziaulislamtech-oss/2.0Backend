@@ -1,12 +1,12 @@
 import chatModel from "../models/chat.model.js"
 import messageModel from "../models/message.model.js"
-import { generateChatTitle, generateResponse } from "../services/ai.service.js"
+import { generateChatTitle, generateResponse, getAvailableModels } from "../services/ai.service.js"
 
 
 export async function sendMessage(req,res){
 
     console.log('send message is receving the requrest...')
-    const {message, chat :chatId } = req.body
+    const {message, chat :chatId, modelKey } = req.body
 
     let title = null, chat = null
 
@@ -25,12 +25,12 @@ export async function sendMessage(req,res){
         role : "user"
     })
     
-    const messages = await messageModel.find({chat : chatId || chat._id})
+    const messages = await messageModel.find({chat : chatId || chat._id}).sort({ createdAt: 1 })
 
     console.log(messages)
 
 
-    const result = await generateResponse(messages) 
+    const result = await generateResponse(messages, modelKey)
 
     const aiMessage = await messageModel.create({
         chat : chatId || chat._id,
@@ -113,5 +113,15 @@ export async function deleteChat(req,res){
 
     res.status(200).json({
         message : "Chat deleted successfully"
+    })
+}
+
+export async function getModels(req,res){
+
+    const models = getAvailableModels()
+
+    res.status(200).json({
+        message : "Models fetched successfully",
+        models
     })
 }

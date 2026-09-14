@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch } from 'react-redux'
-import { setError, setLoading } from '../auth.slice'
-import { login, register } from '../service/auth.api'
+import { setError, setLoading, setUser, setAuthChecked } from '../auth.slice'
+import { login, register, getMe } from '../service/auth.api'
 
 const useAuth = () => {
 
@@ -13,6 +13,7 @@ const useAuth = () => {
 
             dispatch(setLoading(true))
             const data = await register(username,email,password)
+            dispatch(setUser(data.user))
         }
         catch(err){
             dispatch(setError(err.response?.data?.message || "Registration field"))
@@ -27,6 +28,7 @@ const useAuth = () => {
             console.log("handle login is receiving...")
             dispatch(setLoading(true))
             const data = await login(email,password)
+            dispatch(setUser(data.user))
 
         }
         catch(error){
@@ -39,12 +41,27 @@ const useAuth = () => {
         }
     }
 
-   
+    async function handleGetMe(){
+
+        try{
+            const data = await getMe()
+            dispatch(setUser(data.user))
+        }
+        catch(error){
+            // Not logged in / session expired — that's fine, ProtectedRoute
+            // will redirect based on user being null.
+            console.log("handleGetMe failed:", error?.response?.data?.message || error.message)
+        }
+        finally{
+            dispatch(setAuthChecked(true))
+        }
+    }
 
 
   return {
     handleRegister,
-    handleLogin
+    handleLogin,
+    handleGetMe
   }
   
 }

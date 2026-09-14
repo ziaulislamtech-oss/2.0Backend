@@ -8,7 +8,11 @@ const chatSlice = createSlice({
         chats : {},
         currentChatId : null,
         isLoading : false,
-        error : null
+        error : null,
+
+        // Model selection
+        availableModels : [],   // [{ key, label, description }]
+        selectedModelKey : 'atlas'
 
     },
 
@@ -46,9 +50,25 @@ const chatSlice = createSlice({
         setError : (state,action)=>{
 
             state.error = action.payload
+        },
+        setAvailableModels : (state,action)=>{
+            state.availableModels = action.payload
+        },
+        setSelectedModel : (state,action)=>{
+            state.selectedModelKey = action.payload
         }
     }
 })
 
-export const {setChats,setCurrentChatId,setLoading,setError,createNewChat,addNewMessage,addMessage} = chatSlice.actions
+export const {
+    setChats,
+    setCurrentChatId,
+    setLoading,
+    setError,
+    createNewChat,
+    addNewMessage,
+    addMessage,
+    setAvailableModels,
+    setSelectedModel
+} = chatSlice.actions
 export default chatSlice.reducer

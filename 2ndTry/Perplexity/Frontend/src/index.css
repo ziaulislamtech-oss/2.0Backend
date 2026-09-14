@@ -1,25 +1,53 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
 
 
 @theme {
-  --color-primary: #1a0dff;
-  /* electric indigo — bold, high contrast */
+  --font-heading: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
 
-  --color-secondary: #6c47ff;
-  /* violet — complements without competing */
+  /* Brand */
+  --color-primary: #22c39a;
+  --color-primary-hover: #1aa883;
+  --color-secondary: #f2a65a;
+  --color-accent: #ff8b7b;
 
-  --color-background: #ffffff;
-  --color-surface: #f4f4f6;
-  /* cool off-white — subtle depth */
+  /* Light surfaces (login/register) */
+  --color-background: #f9faf9;
+  --color-text: #0c1210;
+  --color-text-muted: #5c6d67;
+  --color-border: #e1e6e3;
 
-  --color-text: #08080f;
-  /* near-black — stronger than #0f172a */
-  --color-text-muted: #52525b;
-  /* warm zinc — readable, not washed out */
+  --color-glass-bg: rgba(255, 255, 255, 0.55);
+  --color-glass-bg-strong: rgba(255, 255, 255, 0.75);
+  --color-glass-border: rgba(255, 255, 255, 0.4);
+  --color-glass-highlight: rgba(255, 255, 255, 0.8);
+  --color-glass-shadow: rgba(15, 40, 35, 0.15);
 
-  --color-border: #d4d4d8;
-  /* zinc — sharper than slate */
+  /* Dark surfaces (dashboard) */
+  --color-bg-dark: #0b1412;
+  --color-glass-bg-dark: rgba(18, 32, 29, 0.55);
+  --color-glass-bg-dark-strong: rgba(18, 32, 29, 0.8);
+  --color-glass-border-dark: rgba(255, 255, 255, 0.07);
+  --color-glass-highlight-dark: rgba(255, 255, 255, 0.1);
+  --color-glass-shadow-dark: rgba(0, 0, 0, 0.45);
 
-  --color-success: #16a34a;
-  --color-danger: #dc2626;
+  --color-text-inverse: #eff5f2;
+  --color-text-inverse-muted: #93a39d;
+
+  --color-success: #2fae66;
+  --color-danger: #e2574c;
+  --color-warning: #f2a65a;
+}
+
+/* Add this to your index.css, outside the @theme block */
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.6s ease-in-out infinite;
 }
