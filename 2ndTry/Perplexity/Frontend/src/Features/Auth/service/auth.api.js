@@ -27,6 +27,6 @@ export async function register(username, email, password) {
 // (using whatever axios instance you already have set up there, same as chat.api.js)
 
 export const getMe = async () => {
-    const response = await api.get('/api/auth/me')
+    const response = await api.get('/api/auth/getme')
     return response.data
 }

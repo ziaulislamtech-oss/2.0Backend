@@ -1,5 +1,5 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setError, setLoading, setUser, setAuthChecked } from '../auth.slice'
 import { login, register, getMe } from '../service/auth.api'
 
@@ -46,6 +46,9 @@ const useAuth = () => {
         try{
             const data = await getMe()
             dispatch(setUser(data.user))
+            console.log('user handled')
+            
+
         }
         catch(error){
             // Not logged in / session expired — that's fine, ProtectedRoute
