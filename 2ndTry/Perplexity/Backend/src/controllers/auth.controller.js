@@ -1,4 +1,3 @@
-
 import userModel from '../models/user.model.js'
 import { sendEmail } from '../services/mail.service.js'
 import jwt from 'jsonwebtoken'
@@ -29,19 +28,7 @@ export const registerController = async (req, res) => {
 
     }, process.env.JWT_SECRET_KEY)
 
-    await sendEmail(
-        email,
-        "Welcome to Perplexity!",
-        `
-                <p>Hi ${username},</p>
-                <p>Thank you for registering at <strong>Perplexity</strong>. We're excited to have you on board!</p>
-                <p>Please verify your email address by clicking the link below:</p>
-                <a href="http://localhost:3000/api/auth/verify-email?token=${emailVerificationToken}">Verify Email</a>
-                <p>If you did not create an account, please ignore this email.</p>
-                <p>Best regards,<br>The Perplexity Team</p>
-        `
-    )
-
+    // Respond immediately — don't make the user wait on (or fail because of) email delivery.
     res.status(201).json({
         message: "User register successfully",
         success: true,
@@ -50,6 +37,23 @@ export const registerController = async (req, res) => {
             username: user.username,
             email: user.email
         }
+    })
+
+    // Send the verification email in the background. If it fails or hangs,
+    // it's logged but never blocks/fails the registration response above.
+    sendEmail(
+        email,
+        "Welcome to Perplexity!",
+        `
+                <p>Hi ${username},</p>
+                <p>Thank you for registering at <strong>Perplexity</strong>. We're excited to have you on board!</p>
+                <p>Please verify your email address by clicking the link below:</p>
+                <a href="${process.env.BASE_URL || "http://localhost:3000"}/api/auth/verify-email?token=${emailVerificationToken}">Verify Email</a>
+                <p>If you did not create an account, please ignore this email.</p>
+                <p>Best regards,<br>The Perplexity Team</p>
+        `
+    ).catch((err) => {
+        console.error(`Failed to send verification email to ${email}:`, err.message)
     })
 }
 
@@ -80,7 +84,7 @@ export const verifyEmailController = async (req, res) => {
         const html = `
            <h1>Email Verified Successfully!</h1>
            <p>Your email has been verified. You can now log in to your account.</p>
-           <a href="http://localhost:3000/login">Go to Login</a>
+           <a href="${process.env.BASE_URL || "http://localhost:3000"}/login">Go to Login</a>
         `
 
         return res.send(html)
