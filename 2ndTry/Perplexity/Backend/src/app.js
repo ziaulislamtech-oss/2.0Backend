@@ -17,8 +17,21 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(morgan("dev"))
 
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://perplexity-tt0i.onrender.com", // apna actual deployed frontend URL yahan confirm/update karein
+]
+
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: function (origin, callback) {
+        // same-origin ya non-browser requests (no Origin header) allow karein,
+        // aur sirf allow-list mein maujood origins ko allow karein
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true)
+        } else {
+            callback(new Error("Not allowed by CORS"))
+        }
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
 }))
