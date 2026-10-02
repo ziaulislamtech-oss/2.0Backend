@@ -1,5 +1,5 @@
 import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { setError, setLoading, setUser, setAuthChecked } from '../auth.slice'
 import { login, register, getMe } from '../service/auth.api'
 
@@ -12,11 +12,16 @@ const useAuth = () => {
         try{
 
             dispatch(setLoading(true))
+            dispatch(setError(null))
+            // Registration does NOT log the user in (no session cookie is issued) —
+            // they still need to verify their email, then log in separately.
+            // So we do NOT dispatch setUser here.
             const data = await register(username,email,password)
-            dispatch(setUser(data.user))
+            return data
         }
         catch(err){
             dispatch(setError(err.response?.data?.message || "Registration field"))
+            throw err
         } finally{
             dispatch(setLoading(false))
         }
@@ -27,12 +32,14 @@ const useAuth = () => {
         try{
             console.log("handle login is receiving...")
             dispatch(setLoading(true))
+            dispatch(setError(null))
             const data = await login(email,password)
             dispatch(setUser(data.user))
 
         }
         catch(error){
             dispatch(setError(error?.response?.data?.message || "Login Failed"))
+            throw error
         }
         finally{
 
@@ -46,9 +53,6 @@ const useAuth = () => {
         try{
             const data = await getMe()
             dispatch(setUser(data.user))
-            console.log('user handled')
-            
-
         }
         catch(error){
             // Not logged in / session expired — that's fine, ProtectedRoute

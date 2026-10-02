@@ -1,28 +1,32 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import useAuth from "../hooks/useAuth";
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [registered, setRegistered] = useState(false);
+
   const { handleRegister } = useAuth();
+  const authError = useSelector((state) => state.auth.error);
+  const isLoading = useSelector((state) => state.auth.loading);
+
+  const navigate = useNavigate();
 
   const submitForm = async (event) => {
     event.preventDefault();
 
-    const payload = {
-      username,
-      email,
-      password,
-    };
-    await handleRegister(username, email, password);
-
-    console.log("Register Payload", payload);
-
-    setUsername("");
-    setEmail("");
-    setPassword("");
+    try {
+      await handleRegister(username, email, password);
+      setRegistered(true);
+      setUsername("");
+      setEmail("");
+      setPassword("");
+    } catch (err) {
+      // error already in state.auth.error, shown below
+    }
   };
 
   return (
@@ -59,102 +63,140 @@ const Register = () => {
 
           <div className="absolute inset-x-0 top-0 h-px bg-glass-highlight-dark rounded-t-2xl" />
 
-          <form onSubmit={submitForm} className="space-y-5">
-
-            {/* Username */}
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium mb-2 text-text-inverse">
-                Username
-              </label>
-
-              <input
-                id="username"
-                required
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                type="text"
-                placeholder="Enter your username"
-                className="
-                  w-full px-4 py-3 rounded-xl
-                  bg-white/5 border border-glass-border-dark
-                  text-text-inverse placeholder:text-text-inverse-muted
-                  outline-none transition
-                  focus:border-primary/50 focus:ring-2 focus:ring-primary/20
-                  focus:bg-white/[0.08]
-                "
-              />
+          {registered ? (
+            // ---- Success state: tell them to verify their email, don't pretend they're logged in ----
+            <div className="text-center py-4">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/15">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+                  <path d="M22 2L11 13" />
+                  <path d="M22 2l-7 20-4-9-9-4 20-7z" />
+                </svg>
+              </div>
+              <h2 className="font-heading text-lg font-semibold text-text-inverse">
+                Check your email
+              </h2>
+              <p className="mt-2 text-sm text-text-inverse-muted">
+                We've sent a verification link to your email address. Please verify your account before signing in.
+              </p>
+              <button
+                onClick={() => navigate("/login")}
+                className="mt-6 w-full py-3 px-4 rounded-xl bg-primary text-bg-dark font-heading font-semibold transition hover:bg-primary-hover active:scale-[0.98]"
+              >
+                Go to Sign in
+              </button>
             </div>
+          ) : (
+            <>
+              {/* Error banner */}
+              {authError && (
+                <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-text-inverse">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0 text-danger">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 8v4M12 16h.01" />
+                  </svg>
+                  <p>{authError}</p>
+                </div>
+              )}
 
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2 text-text-inverse">
-                Email
-              </label>
+              <form onSubmit={submitForm} className="space-y-5">
 
-              <input
-                id="email"
-                value={email}
-                required
-                onChange={(event) => setEmail(event.target.value)}
-                type="email"
-                placeholder="Enter your email"
-                className="
-                  w-full px-4 py-3 rounded-xl
-                  bg-white/5 border border-glass-border-dark
-                  text-text-inverse placeholder:text-text-inverse-muted
-                  outline-none transition
-                  focus:border-primary/50 focus:ring-2 focus:ring-primary/20
-                  focus:bg-white/[0.08]
-                "
-              />
-            </div>
+                {/* Username */}
+                <div>
+                  <label htmlFor="username" className="block text-sm font-medium mb-2 text-text-inverse">
+                    Username
+                  </label>
 
-            {/* Password */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2 text-text-inverse">
-                Password
-              </label>
+                  <input
+                    id="username"
+                    required
+                    value={username}
+                    onChange={(event) => setUsername(event.target.value)}
+                    type="text"
+                    placeholder="Enter your username"
+                    className="
+                      w-full px-4 py-3 rounded-xl
+                      bg-white/5 border border-glass-border-dark
+                      text-text-inverse placeholder:text-text-inverse-muted
+                      outline-none transition
+                      focus:border-primary/50 focus:ring-2 focus:ring-primary/20
+                      focus:bg-white/[0.08]
+                    "
+                  />
+                </div>
 
-              <input
-                id="password"
-                required
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                type="password"
-                placeholder="Create a password"
-                className="
-                  w-full px-4 py-3 rounded-xl
-                  bg-white/5 border border-glass-border-dark
-                  text-text-inverse placeholder:text-text-inverse-muted
-                  outline-none transition
-                  focus:border-primary/50 focus:ring-2 focus:ring-primary/20
-                  focus:bg-white/[0.08]
-                "
-              />
-            </div>
+                {/* Email */}
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium mb-2 text-text-inverse">
+                    Email
+                  </label>
 
-            {/* Register Button */}
-            <button
-              type="submit"
-              className="
-                w-full py-3 px-4 rounded-xl
-                bg-primary text-bg-dark font-heading font-semibold
-                transition hover:bg-primary-hover active:scale-[0.98]
-                shadow-[0_4px_20px_rgba(34,195,154,0.25)]
-              "
-            >
-              Create account
-            </button>
+                  <input
+                    id="email"
+                    value={email}
+                    required
+                    onChange={(event) => setEmail(event.target.value)}
+                    type="email"
+                    placeholder="Enter your email"
+                    className="
+                      w-full px-4 py-3 rounded-xl
+                      bg-white/5 border border-glass-border-dark
+                      text-text-inverse placeholder:text-text-inverse-muted
+                      outline-none transition
+                      focus:border-primary/50 focus:ring-2 focus:ring-primary/20
+                      focus:bg-white/[0.08]
+                    "
+                  />
+                </div>
 
-          </form>
+                {/* Password */}
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium mb-2 text-text-inverse">
+                    Password
+                  </label>
 
-          {/* Login Link */}
-          <div className="mt-6 text-center text-sm text-text-inverse-muted">
-            Already have an account?{" "}
-            <Link to="/login" className="text-primary font-medium hover:text-primary-hover transition">
-              Sign in
-            </Link>
-          </div>
+                  <input
+                    id="password"
+                    required
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    type="password"
+                    placeholder="Create a password"
+                    className="
+                      w-full px-4 py-3 rounded-xl
+                      bg-white/5 border border-glass-border-dark
+                      text-text-inverse placeholder:text-text-inverse-muted
+                      outline-none transition
+                      focus:border-primary/50 focus:ring-2 focus:ring-primary/20
+                      focus:bg-white/[0.08]
+                    "
+                  />
+                </div>
+
+                {/* Register Button */}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="
+                    w-full py-3 px-4 rounded-xl
+                    bg-primary text-bg-dark font-heading font-semibold
+                    transition hover:bg-primary-hover active:scale-[0.98]
+                    shadow-[0_4px_20px_rgba(34,195,154,0.25)]
+                    disabled:opacity-60
+                  "
+                >
+                  {isLoading ? "Creating account…" : "Create account"}
+                </button>
+              </form>
+
+              {/* Login Link */}
+              <div className="mt-6 text-center text-sm text-text-inverse-muted">
+                Already have an account?{" "}
+                <Link to="/login" className="text-primary font-medium hover:text-primary-hover transition">
+                  Sign in
+                </Link>
+              </div>
+            </>
+          )}
 
         </div>
 
