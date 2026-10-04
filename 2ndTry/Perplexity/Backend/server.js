@@ -1,8 +1,3 @@
-import dns from 'node:dns'
-dns.setDefaultResultOrder('ipv4first') // Render (aur kai hosts) pe outbound IPv6 nahi hota —
-                                        // ye Gmail SMTP jaisi services ke IPv6-first resolution
-                                        // ki wajah se ENETUNREACH errors ko rokta hai
-
 import 'dotenv/config'
 import app from './src/app.js'
 import connectToDb from './src/config/database.js'
