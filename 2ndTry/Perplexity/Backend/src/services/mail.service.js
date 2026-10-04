@@ -5,7 +5,7 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
     user: process.env.GOOGLE_USER ,
-    pass: process.env.GOOGLE_ACCOUNT_APP_PASS // Yahan 16-digit ka App Password likhen (bina spaces ke bhi likh sakte hain)
+    pass: process.env.GOOGLE_ACCOUNT_APP_PASS // 16-digit Gmail App Password (bina spaces)
   },
   connectionTimeout: 10000, // 10s — fail fast instead of hanging on a blocked/slow connection
   greetingTimeout: 10000,
