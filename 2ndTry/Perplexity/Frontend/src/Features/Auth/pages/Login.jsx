@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import useAuth from "../hooks/useAuth";
 
 const Login = () => {
   const { handleLogin } = useAuth();
+  const authError = useSelector((state) => state.auth.error);
+  const isLoading = useSelector((state) => state.auth.loading);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -12,14 +15,13 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("login...");
 
-    await handleLogin(email, password);
-
-    setEmail("");
-    setPassword("");
-
-    navigate("/");
+    try {
+      await handleLogin(email, password);
+      navigate("/"); // sirf success par
+    } catch (err) {
+      // error already state.auth.error mein hai, neeche banner mein dikhega
+    }
   };
 
   return (
@@ -55,6 +57,17 @@ const Login = () => {
         <div className="bg-glass-bg-dark backdrop-blur-xl border border-glass-border-dark rounded-2xl p-6 sm:p-8 shadow-[0_8px_32px_var(--color-glass-shadow-dark)] relative">
 
           <div className="absolute inset-x-0 top-0 h-px bg-glass-highlight-dark rounded-t-2xl" />
+
+          {/* Error banner */}
+          {authError && (
+            <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-text-inverse">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mt-0.5 shrink-0 text-danger">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 8v4M12 16h.01" />
+              </svg>
+              <p>{authError}</p>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
 
@@ -109,14 +122,16 @@ const Login = () => {
             {/* Login Button */}
             <button
               type="submit"
+              disabled={isLoading}
               className="
                 w-full py-3 px-4 rounded-xl
                 bg-primary text-bg-dark font-heading font-semibold
                 transition hover:bg-primary-hover active:scale-[0.98]
                 shadow-[0_4px_20px_rgba(34,195,154,0.25)]
+                disabled:opacity-60
               "
             >
-              Sign in
+              {isLoading ? "Signing in…" : "Sign in"}
             </button>
 
           </form>
