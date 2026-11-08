@@ -1,32 +1,34 @@
-import nodemailer from 'nodemailer'
+import { Resend } from 'resend';
 
+// Initialize Resend with your API Key from your .env file
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.GOOGLE_USER ,
-    pass: process.env.GOOGLE_ACCOUNT_APP_PASS // 16-digit Gmail App Password (bina spaces)
-  },
-  connectionTimeout: 10000, // 10s — fail fast instead of hanging on a blocked/slow connection
-  greetingTimeout: 10000,
-  socketTimeout: 15000
-});
+/**
+ * Sends an email using the Resend SDK.
+ * 
+ * NOTE: If you are using Resend's free testing domain, 
+ * the 'from' email MUST be 'onboarding@resend.dev' 
+ * and the 'to' email must be the email address you signed up to Resend with.
+ */
+export async function sendEmail(to, subject, html, text) {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: 'onboarding@resend.dev', // Replace with your custom verified domain later if you get one
+      to: to,
+      subject: subject,
+      html: html,
+      text: text, // Resend accepts a plain text fallback alongside HTML
+    });
 
-
-transporter.verify()
-.then(()=>{console.log('Email transporter is ready to send emails')})
-.catch((err)=>{console.error("Email transporter verification failed : ",err)})
-
-export async function sendEmail(to,subject,html,text){
-
-    const mailOptions = {
-        from : process.env.GOOGLE_USER,
-        to,
-        subject,
-        html,
-        text
+    if (error) {
+      console.error("Resend API error details:", error);
+      throw new Error(`Resend failed to send email: ${error.message}`);
     }
 
-    await transporter.sendMail(mailOptions);
-
+    console.log("Email sent successfully! ID:", data.id);
+    return data;
+  } catch (err) {
+    console.error("Failed to execute sendEmail:", err);
+    throw err;
+  }
 }

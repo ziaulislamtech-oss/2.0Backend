@@ -1,11 +1,10 @@
 import userModel from '../models/user.model.js'
-import { sendEmail } from '../services/mail.service.js'
+// import { sendEmail } from '../services/mail.service.js'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
 
 export const registerController = async (req, res) => {
-
     const { username, email, password } = req.body
 
     const isUserAlreadyExist = await userModel.findOne({
@@ -13,7 +12,6 @@ export const registerController = async (req, res) => {
     })
 
     if (isUserAlreadyExist) {
-
         return res.status(400).json({
             message: `User already exist with this username or email`,
             success: false,
@@ -21,39 +19,23 @@ export const registerController = async (req, res) => {
         })
     }
 
-    const user = await userModel.create({ username, email, password })
+    const user = await userModel.create({ username, email, password, verified: true })
 
-    const emailVerificationToken = jwt.sign({
-        email: user.email,
+    const token = jwt.sign({
+        id: user._id,
+        username: user.username,
+    }, process.env.JWT_SECRET_KEY, { expiresIn: '7d' })
 
-    }, process.env.JWT_SECRET_KEY)
+    res.cookie("token", token)
 
-    // Respond immediately — don't make the user wait on (or fail because of) email delivery.
     res.status(201).json({
-        message: "User register successfully",
+        message: "User registered successfully",
         success: true,
         user: {
             id: user._id,
             username: user.username,
             email: user.email
         }
-    })
-
-    // Send the verification email in the background. If it fails or hangs,
-    // it's logged but never blocks/fails the registration response above.
-    sendEmail(
-        email,
-        "Welcome to Perplexity!",
-        `
-                <p>Hi ${username},</p>
-                <p>Thank you for registering at <strong>Perplexity</strong>. We're excited to have you on board!</p>
-                <p>Please verify your email address by clicking the link below:</p>
-                <a href="${process.env.BASE_URL || "http://localhost:3000"}/api/auth/verify-email?token=${emailVerificationToken}">Verify Email</a>
-                <p>If you did not create an account, please ignore this email.</p>
-                <p>Best regards,<br>The Perplexity Team</p>
-        `
-    ).catch((err) => {
-        console.error(`Failed to send verification email to ${email}:`, err.message)
     })
 }
 
@@ -101,6 +83,7 @@ export const verifyEmailController = async (req, res) => {
 }
 
 export async function loginController(req, res) {
+    console.log("someone is trying to login..")
     const { email, password } = req.body;
 
     const user = await userModel.findOne({ email })
@@ -123,13 +106,13 @@ export async function loginController(req, res) {
         })
     }
 
-    if (!user.verified) {
-        return res.status(400).json({
-            message: "Please verify your email before logging in",
-            success: false,
-            err: "Email not verified"
-        })
-    }
+    // if (!user.verified) {
+    //     return res.status(400).json({
+    //         message: "Please verify your email before logging in",
+    //         success: false,
+    //         err: "Email not verified"
+    //     })
+    // }
 
     const token = jwt.sign({
         id: user._id,

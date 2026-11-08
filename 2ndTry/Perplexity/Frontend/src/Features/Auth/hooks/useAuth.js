@@ -7,25 +7,20 @@ const useAuth = () => {
 
     const dispatch = useDispatch()
 
-    async function handleRegister(username,email,password){
-
-        try{
-
-            dispatch(setLoading(true))
-            dispatch(setError(null))
-            // Registration does NOT log the user in (no session cookie is issued) —
-            // they still need to verify their email, then log in separately.
-            // So we do NOT dispatch setUser here.
-            const data = await register(username,email,password)
-            return data
-        }
-        catch(err){
-            dispatch(setError(err.response?.data?.message || "Registration field"))
-            throw err
-        } finally{
-            dispatch(setLoading(false))
-        }
+   const handleRegister = async (payload) => {
+    try {
+        dispatch(setLoading(true))
+        dispatch(setError(null))
+        const data = await register(payload)
+        dispatch(setUser(data.user))   // ✅ wapas add karo
+        return data
+    } catch (err) {
+        dispatch(setError(err.response?.data?.message || 'Registration failed'))
+        throw err
+    } finally {
+        dispatch(setLoading(false))
     }
+}
 
     async function handleLogin(email,password){
 
