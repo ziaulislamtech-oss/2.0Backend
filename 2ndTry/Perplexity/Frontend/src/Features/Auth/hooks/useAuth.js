@@ -7,20 +7,22 @@ const useAuth = () => {
 
     const dispatch = useDispatch()
 
-   const handleRegister = async (payload) => {
-    try {
-        dispatch(setLoading(true))
-        dispatch(setError(null))
-        const data = await register(payload)
-        dispatch(setUser(data.user))   // ✅ wapas add karo
-        return data
-    } catch (err) {
-        dispatch(setError(err.response?.data?.message || 'Registration failed'))
-        throw err
-    } finally {
-        dispatch(setLoading(false))
-    }
-}
+  const handleRegister = async (username, email, password) => {
+  try {
+    dispatch(setLoading(true));
+    dispatch(setError(null));
+
+    const data = await register(username, email, password);
+
+    dispatch(setUser(data.user));   // ← ye line zaroori hai
+    return data;
+  } catch (err) {
+    dispatch(setError(err.response?.data?.message || "Registration failed"));
+    throw err;
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
 
     async function handleLogin(email,password){
 
