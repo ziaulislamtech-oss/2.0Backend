@@ -4,8 +4,11 @@ import { ChatCohere } from "@langchain/cohere";
 
 import { ChatMistralAI } from "@langchain/mistralai";
 
+import { ChatOpenAI } from "@langchain/openai";
+import { ChatGroq } from "@langchain/groq";
+
 export const mistralModel = new ChatMistralAI({
-    model: "mistral-large-latest",
+    model: "mistral-small-2603",
     apiKey : config.MISTRAL_API_KEY
 });
 
@@ -19,3 +22,11 @@ export const cohereModel = new ChatCohere({
     apiKey : config.COHERE_API_KEY
 })
 
+export const openAiModel = new ChatOpenAI({
+    model : "gpt-4.1-mini",
+    apiKey : config.OPEN_AI_API_KEY
+})
+export const groqModel = new ChatGroq({
+    model : 'openai/gpt-oss-120b',
+    apiKey : config.GROQ_API_KEY
+})
